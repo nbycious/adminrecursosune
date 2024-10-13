@@ -1,0 +1,217 @@
+
+<app-navbar></app-navbar>
+
+  
+   
+   
+
+<div class="fondo">
+  
+    <h3 class="welcome"> Bienvenido al sistema, {{credencial.Nombre}}</h3>      
+    <div class="col-sm-3">
+      <button type="button" class="btn btn-success"  data-bs-toggle="modal"  data-bs-target="#modalRecurso"  data-target=".bd-example-modal-lg" (click)="abrirModalNuevoRecurso()">
+        Nuevo recurso
+      </button>
+    </div>
+
+
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th></th>
+          <th scope="col">Imagen</th>
+          <th scope="col">ID</th>
+          <th scope="col">Clave Admin</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Tipo de Recurso</th>
+          <th scope="col">Estado del recurso</th>
+          <th scope="col">Descripción</th>
+          <th scope="col">Ubicación</th>
+          <th scope="col">Costo</th>
+         
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let recurso of listaRecursos">
+
+          <!--Contenido de la tabla-->
+          <td>
+            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalEditar" (click)="editarModalRecurso(recurso)">
+              Editar
+            </button>
+          </td>
+          <td><img src={{recurso.fotoRecurso}}></td>
+          <td>{{recurso.recursoId}}</td>
+          <td>{{recurso.claveAdmin}}</td>
+          <td>{{recurso.nombreRecurso}}</td>
+          <td>{{recurso.tipoRecurso}}</td>
+          <td>{{recurso.Estado}}</td>
+          <td>{{recurso.descripcion}}</td>
+          <td>{{recurso.Ubicacion}}</td>
+          <td>{{recurso.Costo}}</td>
+          <td>
+            <button type="button" class="btn btn-danger" (click)="eliminarRecurso(recurso)">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  
+
+    
+<!-- Modal Recurso-->
+<div class="modal fade" id="modalRecurso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Recurso</h1>
+        <button type="button" id="btnCerrarModalElemento" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="nombreRecurso">Nombre:</label>
+            <!--Caja de texto para el nombre-->
+            <input type="text" id="nombreRecurso" class="form-control" [(ngModel)]="nuevoRecurso.nombreRecurso">
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="tipoRecurso">Tipo de Recurso:</label>
+            <select id="tipoRecurso" class="form-control" [(ngModel)]="nuevoRecurso.tipoRecurso">
+              <option value="-">-</option>
+              <option value="Insumo">Insumo</option>
+              <option value="Aula">Aula</option>
+              <option value="Equipo">Equipo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="descripcionRecurso">Descripción:</label>
+            <textarea id="descripcionRecurso" class="form-control" [(ngModel)]="nuevoRecurso.descripcion"></textarea>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="estadoRecurso">Estado del recurso:</label>
+            <select id="estadoRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Estado">
+              <option value="-">-</option>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="ubicacionRecurso">Ubicación:</label>
+            <select id="ubicacionRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Ubicacion">
+              <option value="Almacén">Almacén</option>
+              <option value="Métodos">Métodos</option>
+              <option value="Ingeniería II">Ingenieria II</option>
+              <option value="Soldadura">Soldadura</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="ubicacionRecurso">Costo:</label>
+            <input type="text" id="nombreUbicacion" class="form-control" [(ngModel)]="nuevoRecurso.Costo">
+          </div>
+        </div>
+
+
+      
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="agregarRecurso()">Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Editar-->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Recurso</h1>
+        <button type="button" id="btnCerrarEditElemento" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="editNombreRecurso">Nombre:</label>
+            <input type="text" id="editNombreRecurso" class="form-control" [(ngModel)]="editRecurso.nombreRecurso">
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="editTipoRecurso">Tipo de Recurso:</label>
+            <select id="editTipoRecurso" class="form-control" [(ngModel)]="editRecurso.tipoRecurso">
+              <option value="-">-</option>
+              <option value="Insumo">Insumo</option>
+              <option value="Aula">Aula</option>
+              <option value="Equipo">Equipo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="editDescripcionRecurso">Descripción:</label>
+            <textarea id="editDescripcionRecurso" class="form-control" [(ngModel)]="editRecurso.descripcion"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-12">
+          <label for="estadoRecurso">Estado del recurso:</label>
+          <select id="estadoRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Estado">
+            <option value="-">-</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-12">
+          <label for="ubicacionRecurso">Ubicación:</label>
+          <select id="ubicacionRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Ubicacion">
+            <option value="Almacén">Almacén</option>
+            <option value="Métodos">Métodos</option>
+            <option value="Ingeniería II">Ingenieria II</option>
+            <option value="Soldadura">Soldadura</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-md-12">
+          <label for="ubicacionRecurso">Costo:</label>
+          <input type="text" id="nombreUbicacion" class="form-control" [(ngModel)]="nuevoRecurso.Costo">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="editarRecurso()">Editar</button>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+      
+    
+
+
+        

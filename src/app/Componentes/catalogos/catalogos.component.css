@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&display=swap');
+.welcome{
+  padding: 15px;
+  font-family: 'Roboto Slab';
+}
+.fondo{
+    background-color: white;
+    width: 100%;
+    height: 987px;
+}
+.container{
+
+  width: 1251px;
+  height: 889px;
+
+
+  border-radius: 28px;
+  background-color: white;
+}
+
+.modal-content {
+  max-height: 90vh; /* Limitar el tamaño del modal al 90% de la altura de la pantalla */
+  overflow-y: auto; /* Habilitar el scroll si el contenido sobrepasa el tamaño */
+}
+
+  
+  .add-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+  
+  
+  
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 400px;
+  }
+  
+  button {
+    margin: 10px;
+    padding: 10px;
+    cursor: pointer;
+  }
+  

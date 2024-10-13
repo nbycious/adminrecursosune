@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&display=swap');
+.banner{
+    background-color: #02021D;
+    width: fit-content;
+height: 355px;
+flex-shrink: 0;
+}
+
+.textbanner{
+    color: #FFF;
+    width: 1440 px;
+    text-align: center;
+    font: "Roboto Slab";
+    font-size: 50px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    padding: 40px;
+   
+}
+
+.image-cont{
+    width: fit-content;
+    height: 484px;
+  
+    flex-shrink: 0;
+    background: #F2F2F2;
+}
+.jaguarimg{
+    width: 440px;
+    height: 440px;
+    flex-shrink: 0;
+    display: inline-flex;
+}

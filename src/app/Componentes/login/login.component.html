@@ -1,0 +1,14 @@
+<main class="login-container">
+    <section class="login-form">
+      <img loading="lazy" src="https://cdn.builder.io/api/v1/image/assets/TEMP/f0320d81d54a4dccf68b9a600397f4d2b67d1203732fa7db2a626c1e4922f31f?placeholderIfAbsent=true&apiKey=c9f9434ea21848849ebaaffb5d3a7173" alt="Login logo" class="login-logo" />
+      <div class="form-group">
+        <label for="username" class="visually-hidden">Usuario</label>
+        <input type="text" id="username" name="username" class="form-input" placeholder="Usuario" required [(ngModel)]="usuario">
+      </div>
+      <div class="form-group">
+        <label for="password" class="visually-hidden">Contraseña</label>
+        <input type="password" id="password" name="password" class="form-input" placeholder="Contraseña" required [(ngModel)]="contrasena">
+      </div>
+      <button type="button" class="submit-button" (click)="logIn()">Ingresar</button>
+    </section>
+  </main>
