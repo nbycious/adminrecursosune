@@ -6,8 +6,9 @@
       </div>
       <!-- Enlaces -->
       <div class="navbar-links">
-        <a href="Main">Inicio</a>
-        <a href="Catalogos">Catálogos</a>
+        <!-- Enlace visible solo para alumnos -->
+       <!-- Enlace visible solo para administradores -->
+       <a *ngIf="usuario?.Rol === 'Administrador'" routerLink="/Catalogos">Catálogos</a>
         <a> <img class="icon-user" src=".\assets\icon _account_.png"></a>
       </div>
     </div>

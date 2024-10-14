@@ -65,7 +65,7 @@ export class CatalogosComponent implements OnInit {
   editarRecurso(){
     let rutaDoc =  doc(this.firestore,"Recursos",this.editRecurso.recursoId);
     setDoc(rutaDoc,JSON.parse(JSON.stringify(this.editRecurso)))
-    Swal.fire("Edicion Exitosa")
+    Swal.fire("Edición Exitosa")
     let btncerrar = document.getElementById("btnCerarEditElemento")
     btncerrar?.click()
   }
@@ -73,7 +73,7 @@ export class CatalogosComponent implements OnInit {
   eliminarRecurso(recurso: Recurso){
     let rutaDoc =  doc(this.firestore,"Recursos",recurso.recursoId);
     deleteDoc(rutaDoc)
-    Swal.fire("Se elimino el elemento")
+    Swal.fire("Se eliminó el elemento")
   }
 
 

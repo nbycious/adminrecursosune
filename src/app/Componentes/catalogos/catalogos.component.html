@@ -61,7 +61,7 @@
   
 
     
-<!-- Modal Recurso-->
+<!-- Modal Nuevo Recurso-->
 <div class="modal fade" id="modalRecurso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
@@ -72,6 +72,8 @@
       <div class="modal-body">
         <div class="row mb-3">
           <div class="col-md-12">
+            <label for="fotoRecurso">Subir Imagen:</label>
+            <input type="file" id="fotoRecurso" class="form-control">
             <label for="nombreRecurso">Nombre:</label>
             <!--Caja de texto para el nombre-->
             <input type="text" id="nombreRecurso" class="form-control" [(ngModel)]="nuevoRecurso.nombreRecurso">
@@ -122,8 +124,15 @@
 
         <div class="row mb-3">
           <div class="col-md-12">
-            <label for="ubicacionRecurso">Costo:</label>
+            <label for="costo">Costo:</label>
             <input type="text" id="nombreUbicacion" class="form-control" [(ngModel)]="nuevoRecurso.Costo">
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="clave">Clave:</label>
+            <input type="text" id="nombreUbicacion" class="form-control" [(ngModel)]="nuevoRecurso.claveAdmin">
           </div>
         </div>
 
@@ -140,24 +149,27 @@
 
 <!-- Modal Editar-->
 <div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Recurso</h1>
-        <button type="button" id="btnCerrarEditElemento" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Recurso</h1>
+        <button type="button" id="btnCerrarModalElemento" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="row mb-3">
           <div class="col-md-12">
-            <label for="editNombreRecurso">Nombre:</label>
-            <input type="text" id="editNombreRecurso" class="form-control" [(ngModel)]="editRecurso.nombreRecurso">
+            <label for="fotoRecurso">Cambiar Imagen:</label>
+            <input type="file" id="fotoRecurso" class="form-control">
+            <label for="nombreRecurso">Nombre:</label>
+            <!--Caja de texto para el nombre-->
+            <input type="text" id="nombreRecurso" class="form-control" [(ngModel)]="editRecurso.nombreRecurso">
           </div>
         </div>
 
         <div class="row mb-3">
           <div class="col-md-12">
-            <label for="editTipoRecurso">Tipo de Recurso:</label>
-            <select id="editTipoRecurso" class="form-control" [(ngModel)]="editRecurso.tipoRecurso">
+            <label for="tipoRecurso">Tipo de Recurso:</label>
+            <select id="tipoRecurso" class="form-control" [(ngModel)]="editRecurso.tipoRecurso">
               <option value="-">-</option>
               <option value="Insumo">Insumo</option>
               <option value="Aula">Aula</option>
@@ -168,45 +180,59 @@
 
         <div class="row mb-3">
           <div class="col-md-12">
-            <label for="editDescripcionRecurso">Descripción:</label>
-            <textarea id="editDescripcionRecurso" class="form-control" [(ngModel)]="editRecurso.descripcion"></textarea>
+            <label for="descripcionRecurso">Descripción:</label>
+            <textarea id="descripcionRecurso" class="form-control" [(ngModel)]="editRecurso.descripcion"></textarea>
           </div>
         </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-md-12">
-          <label for="estadoRecurso">Estado del recurso:</label>
-          <select id="estadoRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Estado">
-            <option value="-">-</option>
-            <option value="Activo">Activo</option>
-            <option value="Inactivo">Inactivo</option>
-          </select>
-        </div>
-      </div>
 
-      <div class="row mb-3">
-        <div class="col-md-12">
-          <label for="ubicacionRecurso">Ubicación:</label>
-          <select id="ubicacionRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Ubicacion">
-            <option value="Almacén">Almacén</option>
-            <option value="Métodos">Métodos</option>
-            <option value="Ingeniería II">Ingenieria II</option>
-            <option value="Soldadura">Soldadura</option>
-          </select>
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="estadoRecurso">Estado del recurso:</label>
+            <select id="estadoRecurso" class="form-control" [(ngModel)]="editRecurso.Estado">
+              <option value="-">-</option>
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div class="row mb-3">
-        <div class="col-md-12">
-          <label for="ubicacionRecurso">Costo:</label>
-          <input type="text" id="nombreUbicacion" class="form-control" [(ngModel)]="nuevoRecurso.Costo">
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="ubicacionRecurso">Ubicación:</label>
+            <select id="ubicacionRecurso" class="form-control" [(ngModel)]="editRecurso.Ubicacion">
+              <option value="Almacén">Almacén</option>
+              <option value="Métodos">Métodos</option>
+              <option value="Ingeniería II">Ingenieria II</option>
+              <option value="Soldadura">Soldadura</option>
+            </select>
+          </div>
         </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="costo">Costo:</label>
+            <input type="text" id="nombreUbicacion" class="form-control" [(ngModel)]="editRecurso.Costo">
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <label for="clave">Clave:</label>
+            <input type="text" id="nombreUbicacion" class="form-control" [(ngModel)]="editRecurso.claveAdmin">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-warning" (click)="editarRecurso()">Editar</button>
+        </div>
+
+      
+
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" (click)="editarRecurso()">Editar</button>
-      </div>
+   
     </div>
   </div>
+</div>
+
   
 </div>
 

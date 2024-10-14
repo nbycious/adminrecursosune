@@ -1,24 +1,24 @@
 export class Usuario{
     constructor(){}
 
-    idUsuario: string =""; // Se guarda un id unico para cada usuario registrado
-    Nombre: string ="";  // Se guarda el nombre del usuario
-    Apellidos: string =""; // Se guarda los apellidos del usuario
+    UsuarioId: string =""; // Se guarda un id unico para cada usuario registrado
+    Usuario: string =""; //se guarda el username
+    Nombre: string ="";  // Se guarda el nombre propio del usuario
     Correo: string =""; // Se guarda el correo del usuario
     Rol: string =""; // Se guarda el tipo de rol que va a tener el Usuario Ej: Profesor, Alumno, Administrador
     Contrasena: string =""; // Se guarda la contraseña del Usuario
     Carrera: string ="";//carrera del alumno
-    Periodo: string="";//semestre o cuatri que cursa el alumno
+    Periodo: string="";//semestre o cuatrimestre que cursa el alumno
 
 
     setData(data:any){
-        this.idUsuario = data.idUsuario;
+        this.UsuarioId = data.UsuarioId;
         this.Nombre = data.Nombre;
-        this.Apellidos = data.Apellidos;
         this.Correo = data.Correo;
         this.Rol = data.Rol;
         this.Contrasena = data.Contrasena;
         this.Carrera = data.Carrera
+        this.Periodo = data.Periodo;
     }
 }
 export class Recurso{

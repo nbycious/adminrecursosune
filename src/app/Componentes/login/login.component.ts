@@ -23,26 +23,31 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  logIn(){
-
-    //validacion de que los datos del login sean los mismos que estan en la base de datos
-   let q = query(this.UsuariosColeccion, where("Usuario", "==", this.usuario), where("Contrasena", "==", this.contrasena) )
-
-
+  logIn() {
+    // Validación de credenciales
+    let q = query(this.UsuariosColeccion, where("Usuario", "==", this.usuario), where("Contrasena", "==", this.contrasena));
+    
     collectionData(q).subscribe((usuarioSnap) => {
-      if(usuarioSnap.length !=0){
-        Swal.fire("Acceso exitoso")
-        //Llenar variable con informacion del usuario en firebase
-        this.credencial.setData(usuarioSnap[0])
-        //this.navegacion.navigate(['Main'],{state: {nom: usuarioSnap[0].Nombre!}}) // state busca en la coleccion de datos el campo nombre  //navigate es un metodo parar redireccionar
-        this.navegacion.navigate(['Catalogos'], {state: this.credencial })
+      if (usuarioSnap.length != 0) {
+        Swal.fire("Acceso exitoso");
+  
+        // Llenar variable con la información del usuario
+        this.credencial.setData(usuarioSnap[0]);
+  
+        // Guardar el usuario en localStorage
+        localStorage.setItem('usuario', JSON.stringify(this.credencial));
+  
+        // Redirigir según el rol del usuario
+        if (this.credencial.Rol === 'Administrador') {
+          this.navegacion.navigate(['Catalogos']);
+        } else if (this.credencial.Rol === 'Alumno') {
+          this.navegacion.navigate(['Main']);
+        }
+  
+      } else {
+        Swal.fire("No se encontraron usuarios con esas credenciales");
       }
-      else{
-        Swal.fire("No se encontraron usuarios con esas credenciales")
-      }
-    })
-
-
+    });
   }
-
+  
 }

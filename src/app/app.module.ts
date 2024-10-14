@@ -12,6 +12,7 @@ import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { NavbarComponent } from './Componentes/navbar/navbar.component';
 import { CatalogosComponent } from './Componentes/catalogos/catalogos.component';
 import { CatalogosService } from './Componentes/catalogos/catalogos.service';
+import { UsuarioComponent } from './usuario/usuario.component';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { CatalogosService } from './Componentes/catalogos/catalogos.service';
     MainComponent,
     NavbarComponent,
     CatalogosComponent,
+    UsuarioComponent,
   
   ],
   imports: [
