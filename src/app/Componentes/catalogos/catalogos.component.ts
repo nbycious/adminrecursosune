@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Usuario, Recurso } from 'src/app/Clases/bd';
 import { Firestore, collection, collectionData, query, where } from '@angular/fire/firestore';
-import { deleteDoc, doc, setDoc } from 'firebase/firestore';
-import { Router } from '@angular/router';
+import { CatalogosService } from './catalogos.service';
 import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+import { deleteDoc, doc, setDoc } from 'firebase/firestore';
 
 
 @Component({
@@ -14,17 +15,21 @@ import Swal from 'sweetalert2';
 export class CatalogosComponent implements OnInit {
 
   recursos: Recurso[] = [];
+  usuario: any = null;
 
-
-  credencial = new Usuario();
   nuevoRecurso = new Recurso();
   editRecurso = new Recurso();
   listaRecursos: Recurso[] = new Array();
 
   recursosBD= collection(this.firestore, "Recursos")
 
-  constructor(private firestore: Firestore, private navegacion: Router) {
-    this.credencial = history.state;
+ 
+  constructor(private catalogoServ: CatalogosService, private router: Router, private firestore: Firestore){
+    const storedUser = localStorage.getItem('usuario');
+    if (storedUser) {
+      this.usuario = JSON.parse(storedUser);
+    }
+
     let q = query(this.recursosBD)
     collectionData(q).subscribe((recursoSnap) =>{
       this.listaRecursos = new Array()
@@ -37,10 +42,14 @@ export class CatalogosComponent implements OnInit {
   }
 
   ngOnInit() {
-    
+   this.catalogoServ.getRecursos().subscribe(recursos => {
+    this.recursos = recursos;
+   })
+        
+
   }
 
-  
+  /*Funciones del modal*/
   abrirModalNuevoRecurso(){
     this.nuevoRecurso = new Recurso();
     
@@ -87,7 +96,9 @@ export class CatalogosComponent implements OnInit {
 
     return result1;
 }
+ 
+}
 
   
 
-}
+

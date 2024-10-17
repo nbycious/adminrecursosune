@@ -1,87 +1,52 @@
 
 <app-navbar></app-navbar>
 
-  
-   
-   
+ <!--seccion de filtros y agregar--> 
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="filter-container custom-filter-container card p-3 shadow-sm">
+        <button type="button"  *ngIf="usuario?.Rol === 'Administrador'" class="btn btn-success"  data-bs-toggle="modal"  data-bs-target="#modalRecurso"  data-target=".bd-example-modal-lg" (click)="abrirModalNuevoRecurso()">Agregar nuevo recurso</button><!--Solo visible para el admin-->
+        <label for="searchTerm" class="form-label mt-2 fuentetxt">Buscar:</label>
+        <input id="searchTerm" class="form-control fuentetxt2">
 
-<div class="fondo">
-  
-    <h3 class="welcome"> Bienvenido al sistema, {{credencial.Nombre}}</h3>      
-    <div class="col-sm-3">
-      <button type="button" class="btn btn-success"  data-bs-toggle="modal"  data-bs-target="#modalRecurso"  data-target=".bd-example-modal-lg" (click)="abrirModalNuevoRecurso()">
-        Nuevo recurso
-      </button>
+        <label for="sizeFilter" class="form-label mt-2 fuentetxt">Categoría:</label>
+        <select id="sizeFilter" class="form-select fuentetxt2"><!--ngModel para filtrar elementos-->
+          <option value="Material">Material</option>
+          <option value="Laboratorio">Aula</option>
+        </select>
+      </div>
     </div>
-
-
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th></th>
-          <th scope="col">Imagen</th>
-          <th scope="col">ID</th>
-          <th scope="col">Clave Admin</th>
-          <th scope="col">Nombre</th>
-          <th scope="col">Tipo de Recurso</th>
-          <th scope="col">Estado del recurso</th>
-          <th scope="col">Descripción</th>
-          <th scope="col">Ubicación</th>
-          <th scope="col">Costo</th>
-         
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let recurso of listaRecursos">
-
-          <!--Contenido de la tabla-->
-          <td>
-            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalEditar" (click)="editarModalRecurso(recurso)">
-              Editar
-            </button>
-          </td>
-          <td><img src={{recurso.fotoRecurso}}></td>
-          <td>{{recurso.recursoId}}</td>
-          <td>{{recurso.claveAdmin}}</td>
-          <td>{{recurso.nombreRecurso}}</td>
-          <td>{{recurso.tipoRecurso}}</td>
-          <td>{{recurso.Estado}}</td>
-          <td>{{recurso.descripcion}}</td>
-          <td>{{recurso.Ubicacion}}</td>
-          <td>{{recurso.Costo}}</td>
-          <td>
-            <button type="button" class="btn btn-danger" (click)="eliminarRecurso(recurso)">
-              Eliminar
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  </div>
   
 
-    
-<!-- Modal Nuevo Recurso-->
+<!--modales-->
+
+  <!-- Modal Nuevo Recurso-->
+<!-- Modal Nuevo Recurso -->
 <div class="modal fade" id="modalRecurso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Recurso</h1>
         <button type="button" id="btnCerrarModalElemento" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
+        <!-- Primer Fila -->
         <div class="row mb-3">
-          <div class="col-md-12">
-            <label for="fotoRecurso">Subir Imagen:</label>
-            <input type="file" id="fotoRecurso" class="form-control">
+          <div class="col-md-6">
+            <label for="fotoRecurso">Enlace de la Imagen:</label>
+            <input type="text" id="linkFoto" class="form-control" [(ngModel)]="nuevoRecurso.fotoRecurso">
+          </div>
+          <div class="col-md-6">
             <label for="nombreRecurso">Nombre:</label>
-            <!--Caja de texto para el nombre-->
             <input type="text" id="nombreRecurso" class="form-control" [(ngModel)]="nuevoRecurso.nombreRecurso">
           </div>
         </div>
 
+        <!-- Segunda Fila -->
         <div class="row mb-3">
-          <div class="col-md-12">
+          <div class="col-md-6">
             <label for="tipoRecurso">Tipo de Recurso:</label>
             <select id="tipoRecurso" class="form-control" [(ngModel)]="nuevoRecurso.tipoRecurso">
               <option value="-">-</option>
@@ -90,18 +55,8 @@
               <option value="Equipo">Equipo</option>
             </select>
           </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-12">
-            <label for="descripcionRecurso">Descripción:</label>
-            <textarea id="descripcionRecurso" class="form-control" [(ngModel)]="nuevoRecurso.descripcion"></textarea>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-12">
-            <label for="estadoRecurso">Estado del recurso:</label>
+          <div class="col-md-6">
+            <label for="estadoRecurso">Estado del Recurso:</label>
             <select id="estadoRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Estado">
               <option value="-">-</option>
               <option value="Activo">Activo</option>
@@ -110,35 +65,34 @@
           </div>
         </div>
 
+        <!-- Tercera Fila -->
         <div class="row mb-3">
-          <div class="col-md-12">
+          <div class="col-md-6">
             <label for="ubicacionRecurso">Ubicación:</label>
             <select id="ubicacionRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Ubicacion">
               <option value="Almacén">Almacén</option>
               <option value="Métodos">Métodos</option>
-              <option value="Ingeniería II">Ingenieria II</option>
+              <option value="Ingeniería II">Ingeniería II</option>
               <option value="Soldadura">Soldadura</option>
             </select>
           </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-md-12">
+          <div class="col-md-6">
             <label for="costo">Costo:</label>
-            <input type="text" id="nombreUbicacion" class="form-control" [(ngModel)]="nuevoRecurso.Costo">
+            <input type="text" id="costoRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Costo">
           </div>
         </div>
 
+        <!-- Cuarta Fila -->
         <div class="row mb-3">
-          <div class="col-md-12">
+          <div class="col-md-6">
+            <label for="descripcionRecurso">Descripción:</label>
+            <textarea id="descripcionRecurso" class="form-control" [(ngModel)]="nuevoRecurso.descripcion"></textarea>
+          </div>
+          <div class="col-md-6">
             <label for="clave">Clave:</label>
-            <input type="text" id="nombreUbicacion" class="form-control" [(ngModel)]="nuevoRecurso.claveAdmin">
+            <input type="text" id="claveRecurso" class="form-control" [(ngModel)]="nuevoRecurso.claveAdmin">
           </div>
         </div>
-
-
-      
-
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-success" (click)="agregarRecurso()">Agregar</button>
@@ -147,19 +101,20 @@
   </div>
 </div>
 
-<!-- Modal Editar-->
+
+  <!-- Modal Editar-->
 <div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Recurso</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Recurso</h1>
         <button type="button" id="btnCerrarModalElemento" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="row mb-3">
           <div class="col-md-12">
             <label for="fotoRecurso">Cambiar Imagen:</label>
-            <input type="file" id="fotoRecurso" class="form-control">
+            <input type="text" id="linkFoto" class="form-control" [(ngModel)]="editRecurso.fotoRecurso">
             <label for="nombreRecurso">Nombre:</label>
             <!--Caja de texto para el nombre-->
             <input type="text" id="nombreRecurso" class="form-control" [(ngModel)]="editRecurso.nombreRecurso">
@@ -170,7 +125,6 @@
           <div class="col-md-12">
             <label for="tipoRecurso">Tipo de Recurso:</label>
             <select id="tipoRecurso" class="form-control" [(ngModel)]="editRecurso.tipoRecurso">
-              <option value="-">-</option>
               <option value="Insumo">Insumo</option>
               <option value="Aula">Aula</option>
               <option value="Equipo">Equipo</option>
@@ -189,7 +143,6 @@
           <div class="col-md-12">
             <label for="estadoRecurso">Estado del recurso:</label>
             <select id="estadoRecurso" class="form-control" [(ngModel)]="editRecurso.Estado">
-              <option value="-">-</option>
               <option value="Activo">Activo</option>
               <option value="Inactivo">Inactivo</option>
             </select>
@@ -200,9 +153,8 @@
           <div class="col-md-12">
             <label for="ubicacionRecurso">Ubicación:</label>
             <select id="ubicacionRecurso" class="form-control" [(ngModel)]="editRecurso.Ubicacion">
-              <option value="Almacén">Almacén</option>
-              <option value="Métodos">Métodos</option>
-              <option value="Ingeniería II">Ingenieria II</option>
+              <option value="Almacén PIAR">Almacén PIAR</option>
+              <option value="Lab. Redes">Lab. Redes</option>
               <option value="Soldadura">Soldadura</option>
             </select>
           </div>
@@ -233,11 +185,29 @@
   </div>
 </div>
 
-  
-</div>
+  <!-- contenedor de recursos-->
+  <section class="text-gray-600 body-font">
+    <div class="container px-5 py-24 mx-auto">
+      <div class="flex flex-wrap -m-4">
+        <div *ngFor="let recurso of recursos" class="lg:w-1/4 md:w-1/2 p-4 w-full">
+          <a [routerLink]="['/Detalle', recurso.recursoId]" class="block relative h-48 rounded overflow-hidden">
+            <img [src]="recurso.fotoRecurso" alt="fotoRecurso" class="object-cover object-center w-full h-full block">
+          </a>
+          <div class="mt-4">
+            <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">{{recurso.tipoRecurso}}</h3>
+            <h2 class="text-gray-900 title-font text-lg font-medium">{{recurso.nombreRecurso}}</h2>
+            <p class="mt-1">{{recurso.Ubicacion}}</p>
+              
 
-      
-    
-
-
-        
+            <!--Botones solo visibles para admin-->
+            <button  *ngIf="usuario?.Rol === 'Administrador'" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditar" (click)="editarModalRecurso(recurso)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+            </svg></button>
+            <button  *ngIf="usuario?.Rol === 'Administrador'" type="button" class="btn btn-outline-danger" (click)="eliminarRecurso(recurso)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+              <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+            </svg></button>
+          </div>
+        </div>
+       

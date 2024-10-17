@@ -1,3 +1,7 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&display=swap');
 .welcome{
   padding: 15px;
@@ -32,13 +36,17 @@
     cursor: pointer;
   }
   
-  
+  .modal-title{
+    font-size: 30px;
+    font-weight: bold;
+  }
   
   .modal-content {
     background-color: white;
     padding: 20px;
     border-radius: 5px;
-    width: 400px;
+    width: 800px;
+    align-self: center;
   }
   
   button {

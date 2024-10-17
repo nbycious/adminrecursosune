@@ -7,9 +7,13 @@
       <!-- Enlaces -->
       <div class="navbar-links">
         <!-- Enlace visible solo para alumnos -->
+        <a *ngIf="usuario?.Rol === 'Alumno'" href="/Main  ">Inicio</a>
+        <a *ngIf="usuario?.Rol === 'Alumno'" href="/Contacto">Contáctanos</a>
+        
        <!-- Enlace visible solo para administradores -->
-       <a *ngIf="usuario?.Rol === 'Administrador'" routerLink="/Catalogos">Catálogos</a>
-        <a> <img class="icon-user" src=".\assets\icon _account_.png"></a>
+       
+        <a href="/Perfil"> <img class="icon-user" src=".\assets\icon _account_.png"></a>
+        
       </div>
     </div>
   </nav>

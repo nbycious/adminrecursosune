@@ -21,6 +21,7 @@ export class Usuario{
         this.Periodo = data.Periodo;
     }
 }
+
 export class Recurso{
     constructor(){}
 

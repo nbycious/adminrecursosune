@@ -1,0 +1,42 @@
+main {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.infoUsuario h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #000000;
+}
+.detallesUsuario{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 25px;
+}
+.fotoUsuario img {
+    height: 200px;
+    border-radius: 50%;
+}
+
+.datosUsuario p {
+    margin-bottom: 10px;
+}
+
+.datosUsuario p strong {
+    font-weight: bold;
+    color: #333;
+}
+
+.solicitudUsuario h2 {
+    text-align: center;
+    margin-top: 40px;
+    color: #333;
+    font-size: 24px;
+}
+

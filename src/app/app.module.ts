@@ -10,9 +10,14 @@ import { FormsModule } from '@angular/forms';
 import {provideFirebaseApp, initializeApp} from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { NavbarComponent } from './Componentes/navbar/navbar.component';
+
+
 import { CatalogosComponent } from './Componentes/catalogos/catalogos.component';
+import { ContactoComponent } from './Componentes/contacto/contacto.component';
 import { CatalogosService } from './Componentes/catalogos/catalogos.service';
-import { UsuarioComponent } from './usuario/usuario.component';
+import { PerfilUsuarioComponent } from './Componentes/perfil-usuario/perfil-usuario.component';
+import { DetallerecursoComponent } from './Componentes/detallerecurso/detallerecurso.component';
+
 
 
 @NgModule({
@@ -22,7 +27,11 @@ import { UsuarioComponent } from './usuario/usuario.component';
     MainComponent,
     NavbarComponent,
     CatalogosComponent,
-    UsuarioComponent,
+    ContactoComponent,
+    PerfilUsuarioComponent,
+    DetallerecursoComponent
+    
+    
   
   ],
   imports: [
