@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './Componentes/login/login.component';
 import { MainComponent } from './Componentes/main/main.component';
 import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 //BD
 import {provideFirebaseApp, initializeApp} from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
@@ -17,6 +19,7 @@ import { ContactoComponent } from './Componentes/contacto/contacto.component';
 import { CatalogosService } from './Componentes/catalogos/catalogos.service';
 import { PerfilUsuarioComponent } from './Componentes/perfil-usuario/perfil-usuario.component';
 import { DetallerecursoComponent } from './Componentes/detallerecurso/detallerecurso.component';
+import { InputComponent } from './Componentes/input/input.component';
 
 
 
@@ -29,7 +32,8 @@ import { DetallerecursoComponent } from './Componentes/detallerecurso/detallerec
     CatalogosComponent,
     ContactoComponent,
     PerfilUsuarioComponent,
-    DetallerecursoComponent
+    DetallerecursoComponent,
+    
     
     
   
@@ -38,6 +42,7 @@ import { DetallerecursoComponent } from './Componentes/detallerecurso/detallerec
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    ReactiveFormsModule,
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideFirestore(() => getFirestore())
 

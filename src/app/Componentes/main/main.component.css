@@ -6,6 +6,11 @@
     flex-shrink: 0;
 
 }
+.imagenjaguar{
+    width: 1500;
+height: 540px;
+
+}
 .cont-option{
     display: flex;
   justify-content: center;
