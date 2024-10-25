@@ -5,7 +5,8 @@ import { CatalogosService } from './catalogos.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FileUploadService } from './upload.service';
+
 import { NgForm } from '@angular/forms';
 
 
@@ -31,13 +32,17 @@ export class CatalogosComponent implements OnInit {
   selectedCategory: string = '';
   selectedStatus: string = '';
   recursosFiltrados: Recurso[] = [];
-
+  public archivos: any = [];
   recursosBD= collection(this.firestore, "Recursos")
   esAula: boolean = false;
  
+  selectedFile: File | null = null;
+
+  
   constructor(private catalogoServ: CatalogosService, 
   private router: Router, 
   private firestore: Firestore, 
+  private fileUploadService: FileUploadService
   ){
 
     
@@ -105,37 +110,79 @@ export class CatalogosComponent implements OnInit {
     this.esAula = tipo === 'Aula';
   }
 
-  agregarRecurso(form: NgForm) {
+  async agregarRecurso(form: NgForm) {
    
     if (form.valid){
-      this.nuevoRecurso.recursoId = this.generateRandomString(15);
-      let rutaDoc = doc(this.firestore, "Recursos", this.nuevoRecurso.recursoId);
-      setDoc(rutaDoc, JSON.parse(JSON.stringify(this.nuevoRecurso))).then(() => {
-        console.log('Formulario válido, agregando recurso:', this.nuevoRecurso);
-        Swal.fire("Registro Exitoso");
-        this.listaRecursos.push(this.nuevoRecurso);  // Actualiza la lista en tiempo real
-        let btncerrar = document.getElementById("btnCerrarModalElemento");
-        btncerrar?.click();
-    });
+      try {
+        if (this.selectedFile) {
+          // Subir la imagen y obtener la URL
+          const imageUrl = await this.fileUploadService.uploadImage(
+            this.selectedFile,
+            'recursos' // carpeta en Firebase Storage
+          );
+          
+          // Asignar la URL a la propiedad fotoRecurso
+          this.nuevoRecurso.fotoRecurso = imageUrl;
+        }
+  
+           this.nuevoRecurso.recursoId = this.generateRandomString(15);
+            let rutaDoc = doc(this.firestore, "Recursos", this.nuevoRecurso.recursoId);
+            setDoc(rutaDoc, JSON.parse(JSON.stringify(this.nuevoRecurso)))
+              console.log('Formulario válido, agregando recurso:', this.nuevoRecurso);
+              Swal.fire("Registro Exitoso");
+              this.listaRecursos.push(this.nuevoRecurso);  // Actualiza la lista en tiempo real
+              let btncerrar = document.getElementById("btnCerrarModalElemento");
+              btncerrar?.click();
+         
+  
+        
+      } catch (error) {
+        console.error('Error al guardar el recurso:', error);
+      }
+ 
     }
     else{
       console.log('Formulario no válido, revisa los campos.');
     form.control.markAllAsTouched(); // Marca todos los campos como tocados para mostrar los errores
     }
       
-  
+
 }
   
-  editarRecurso(){
-    let rutaDoc =  doc(this.firestore,"Recursos",this.editRecurso.recursoId);
-    setDoc(rutaDoc,JSON.parse(JSON.stringify(this.editRecurso)))
-    Swal.fire("Edición Exitosa")
-    let btncerrar = document.getElementById("btnCerarEditElemento")
-    btncerrar?.click()
+ async editarRecurso(form: NgForm){
+  if (form.valid){
+    try {
+      if (this.selectedFile) {
+        // Subir la imagen y obtener la URL
+        const imageUrl = await this.fileUploadService.uploadImage(
+          this.selectedFile,
+          'recursos' // carpeta en Firebase Storage
+        );
+        
+        // Asignar la URL a la propiedad fotoRecurso
+        this.editRecurso.fotoRecurso = imageUrl;
+      }
+      let rutaDoc =  doc(this.firestore,"Recursos",this.editRecurso.recursoId);
+      setDoc(rutaDoc,JSON.parse(JSON.stringify(this.editRecurso)))
+      Swal.fire("Edición Exitosa")
+      let btncerrar = document.getElementById("btnCerarEditElemento")
+      btncerrar?.click()
+     
+      
+    } catch (error) {
+      console.error('Error al guardar el recurso:', error);
+    }
+   
   }
+  else{
+    console.log('Formulario no válido, revisa los campos.');
+  form.control.markAllAsTouched(); // Marca todos los campos como tocados para mostrar los errores
+  }
+}
 
-  
 
+
+ 
 // Método que se ejecuta al cambiar el tipo de recurso
 onTipoRecursoChange(tipo: string) {
   if (this.nuevoRecurso.tipoRecurso === 'Aula') {
@@ -169,6 +216,48 @@ fotoPreview: string | ArrayBuffer | null = null;
     }
   }
 
+  async onFileSelected(event: any) {
+    this.selectedFile = event.target.files[0];
+  }
+
+  activarRecurso(recurso: Recurso){
+    const rutaDoc = doc(this.firestore, "Recursos", recurso.recursoId);
+    Swal.fire({
+      title: "¿Seguro que quiere reactivar?",
+      text: "Se cambiará el estatus del recurso a 'Activo'",
+      icon: "warning",
+      showCancelButton: true,
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Aceptar"
+    }).then((result)=>{
+
+      if (result.isConfirmed) {
+        // Actualizar el estado del recurso a "Inactivo"
+        updateDoc(rutaDoc, {
+          Estado: "Activo"
+        }).then(() => {
+          // Actualizar el estado en el objeto local
+          recurso.Estado = "Activo";
+          
+          Swal.fire({
+            title: "Estatus cambiado exitosamente",
+            text: "El recurso ha sido activado",
+            icon: "success"
+          });
+        }).catch((error) => {
+          console.error("Error al activar el recurso:", error);
+          Swal.fire({
+            title: "Error",
+            text: "No se pudo activar el recurso",
+            icon: "error"
+          });
+        });
+      }
+    });
+  
+  }
 
   desactivarRecurso(recurso: Recurso) {
     const rutaDoc = doc(this.firestore, "Recursos", recurso.recursoId);
@@ -217,5 +306,3 @@ fotoPreview: string | ArrayBuffer | null = null;
 
 
   
-
-
