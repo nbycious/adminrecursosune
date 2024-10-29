@@ -259,7 +259,7 @@
   <section class="text-gray-600 body-font">
     <div class="container px-5 py-24 mx-auto">
       <div class="flex flex-wrap -m-4">
-        <div *ngFor="let recurso of recursosFiltrados" class="lg:w-1/4 md:w-1/2 p-4 w-full">
+        <div *ngFor="let recurso of recursosFiltrados | slice:0:25" class="lg:w-1/4 md:w-1/2 p-4 w-full">
           <a [routerLink]="['/Detalle', recurso.recursoId]" class="block relative h-48 rounded overflow-hidden">
             <img [src]="recurso.fotoRecurso" alt="fotoRecurso" class="object-cover object-center w-full h-full block"><!--aqui debe de ir la imagen agregada por el input-->
           </a>
