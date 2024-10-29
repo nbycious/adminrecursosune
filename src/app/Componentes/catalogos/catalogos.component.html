@@ -17,14 +17,14 @@
         <div class="row mt-2">
           <!-- Filtro de categoría -->
           <div class="col-6">
-            <label for="categoryFilter" class="form-label fuentetxt">Tipo de Recurso:</label>
+            <label for="categoryFilter" class="form-label fuentetxt">Categoría:</label>
             <select id="categoryFilter" class="form-select fuentetxt2" [(ngModel)]="selectedCategory" (change)="aplicarFiltros()">
               <option value="">Todos</option>
               <option value="Material">Material</option>
               <option value="Aula">Aula</option>
             </select>
           </div>
-
+ñ
           <!-- Filtro de estatus -->
           <div class="col-6">
             <label for="statusFilter" class="form-label fuentetxt">Estatus:</label>
@@ -109,8 +109,10 @@
               <option *ngIf="esAula" value="Quinto piso, edif. principal">Quinto piso, edif. principal</option>
               <option *ngIf="esAula" value="Segundo piso, edif. principal">Segundo piso, edif. principal</option>
               <!-- Opciones para otros tipos de recurso -->
-              <option *ngIf="!esAula" value="PIAR">PIAR</option>
-              <option *ngIf="!esAula" value="REDES">REDES</option>
+              <option *ngIf="!esAula" value="Almacén Piar">Almacén Piar</option>
+              <option *ngIf="!esAula" value="Métodos">Métodos</option>
+              <option *ngIf="!esAula" value="Ingeniería II">Ingeniería II</option>
+              <option *ngIf="!esAula" value="Soldadura">Soldadura</option>
             </select>
           </div>
           <!-- Solo mostrar el campo Costo si el tipo de recurso NO es "Aula" -->
@@ -133,7 +135,7 @@
           </div>
           <div class="col-md-6">
             <label for="clave">Clave:</label>
-            <input type="text" id="claveRecurso" class="form-control" [(ngModel)]="nuevoRecurso.claveAdmin" name="claveRecurso">
+            <input type="text" id="claveRecurso" class="form-control" [(ngModel)]="nuevoRecurso.claveAdmin" name="claveRecurso" required>
           </div>
         </div>
 
@@ -217,8 +219,10 @@
               <option *ngIf="esAula" value="Quinto piso, edif. principal">Quinto piso, edif. principal</option>
               <option *ngIf="esAula" value="Segundo piso, edif. principal">Segundo piso, edif. principal</option>
               <!-- Opciones para otros tipos de recurso -->
-              <option *ngIf="!esAula" value="PIAR">PIAR</option>
-              <option *ngIf="!esAula" value="REDES">REDES</option>
+              <option *ngIf="!esAula" value="Almacén">Almacén Piar</option>
+              <option *ngIf="!esAula" value="Métodos">Métodos</option>
+              <option *ngIf="!esAula" value="Ingeniería II">Ingeniería II</option>
+              <option *ngIf="!esAula" value="Soldadura">Soldadura</option>
             </select>
           </div>
           <!-- Solo mostrar el campo Costo si el tipo de recurso NO es "Aula" -->
@@ -241,7 +245,7 @@
           </div>
           <div class="col-md-6">
             <label for="clave">Clave:</label>
-            <input type="text" id="claveRecurso" class="form-control" [(ngModel)]="editRecurso.claveAdmin" name="claveRecurso">
+            <input type="text" id="claveRecurso" class="form-control" [(ngModel)]="editRecurso.claveAdmin" name="claveRecurso" required>
           </div>
         </div>
 
