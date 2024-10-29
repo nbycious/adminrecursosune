@@ -29,16 +29,17 @@ export class Recurso{
     nombreRecurso: string = ""; // Se guarda el nombre del recurso
     descripcion: string = ""; // Se guarda un breve descripción del recurso
     tipoRecurso: string = ""; // Se guarda el tipo de recurso Ej: Insumo, Aula, Equipo
-    Supervision: boolean = false; // Se indica si el uso del recurso necesita supervisión
+    //Supervision: boolean = false; // Se indica si el uso del recurso necesita supervisión
     Estado : string = ""; // Se guarda el estado del recurso que quiera utilizar Ej: Activo, Inactivo
     Ubicacion: string="";//El lugar fisico donde se encuenta el recurso o si es insumo en almacen
     Costo=""; //lo que le costo del producto a la institucion, en caso de que exista un daño saber cuanto cobrar
     cantidadReal=""; //cantidad que hay en el inventario realmente
     cantidadDisp=""; //la cantidad que hay disponible (puede disminuir cuando se solicita)
-    unidadMedida="";//por ejemplo si es un cable metros etc
+    //unidadMedida="";//por ejemplo si es un cable metros etc
     horarioDisp="";//horario ene l que esta disponible el recurso
     claveAdmin = "" //clave que el administrador asigna al recurso
     fotoRecurso=""; //foto del recurso
+    Categoria="";
 
     setData(data:any){
         this.recursoId = data.recursoId;
@@ -46,7 +47,7 @@ export class Recurso{
         this.descripcion = data.descripcion;
         this.tipoRecurso = data.tipoRecurso;
         //this.Cantidad = data.Cantidad;
-        this.Supervision = data.Supervision;
+        //this.Supervision = data.Supervision;
         this.Estado = data.Estado;
         this.Ubicacion = data.Ubicacion;
         this.Costo = data.Costo;
@@ -55,6 +56,7 @@ export class Recurso{
         this.fotoRecurso = data.fotoRecurso;
         this.cantidadReal= data.cantidadReal;
         this.cantidadDisp = data.cantidadDisp;
+        this.Categoria = data.Categoria;
     }
 }
 export class Inventario{
