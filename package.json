@@ -23,6 +23,7 @@
     "@angular/router": "~12.2.0",
     "bootstrap": "^5.3.3",
     "firebase": "^9.10.0",
+    "read-excel-file": "^5.8.6",
     "rxfire": "^6.0.0",
     "rxjs": "^6.6.0",
     "sweetalert2": "^11.14.1",
