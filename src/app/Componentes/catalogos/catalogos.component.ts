@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
 import { FileUploadService } from './upload.service';
-
+import readXlsxFile from 'read-excel-file'
 import { NgForm } from '@angular/forms';
 
 
@@ -29,8 +29,9 @@ export class CatalogosComponent implements OnInit {
 
   // Nuevas propiedades para los filtros
   searchTerm: string = '';
-  selectedCategory: string = '';
-  selectedStatus: string = '';
+  tipoSeleccionado: string = "";
+  categoriaSeleccionada: string = '';
+  estadoSeleccionado: string = '';
   recursosFiltrados: Recurso[] = [];
   public archivos: any = [];
   recursosBD= collection(this.firestore, "Recursos")
@@ -72,25 +73,66 @@ export class CatalogosComponent implements OnInit {
 
   }
 
+
+  onExcelUpload(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      readXlsxFile(file).then((rows: any[][]) => {
+        rows.slice(1).forEach(row => {
+          const recurso = new Recurso();
+          recurso.fotoRecurso = row[1];
+          recurso.nombreRecurso = row[2];       
+          recurso.tipoRecurso = row[4]; 
+          recurso.Estado = row[5]; 
+          recurso.Categoria = row[6];
+          recurso.Ubicacion = row[7];
+          recurso.cantidadReal = row[10];
+          
+
+          // Guarda el recurso en Firestore
+          this.agregarRecursoDesdeExcel(recurso);
+          this.listaRecursos.push(recurso);     
+        });
+      });
+    }
+  }
+
+
+  // Método para agregar recursos desde Excel a Firestore
+  async agregarRecursoDesdeExcel(recurso: Recurso) {
+    try {
+      const recursoId = this.generateRandomString(15);
+      recurso.recursoId = recursoId;
+      const rutaDoc = doc(this.firestore, "Recursos", recursoId);
+      await setDoc(rutaDoc, JSON.parse(JSON.stringify(recurso)));
+     
+    } catch (error) {
+      console.error('Error al agregar recurso desde Excel:', error);
+    }
+  }
   aplicarFiltros() {
     this.recursosFiltrados = this.recursos.filter(recurso => {
       // Filtro por término de búsqueda
+      
+      console.log("RecursoNombre",recurso.nombreRecurso);
+      
       const cumpleBusqueda = !this.searchTerm || 
-        recurso.nombreRecurso.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        recurso.descripcion.toLowerCase().includes(this.searchTerm.toLowerCase());
-
-      // Filtro por categoría
-      const cumpleCategoria = !this.selectedCategory ||
-        (this.selectedCategory === 'Material' && 
+        recurso.nombreRecurso.toLowerCase().includes(this.searchTerm.toLowerCase())
+      
+      // Filtro por tipo
+      const cumpleTipo = !this.tipoSeleccionado ||
+        (this.categoriaSeleccionada=== 'Material' && 
          (recurso.tipoRecurso === 'Insumo' || recurso.tipoRecurso === 'Equipo')) ||
-        (this.selectedCategory === 'Aula' && recurso.tipoRecurso === 'Aula');
+        (this.tipoSeleccionado=== 'Aula' && recurso.tipoRecurso === 'Aula');
 
       // Filtro por estado
-      const cumpleEstado = !this.selectedStatus || 
-        recurso.Estado === this.selectedStatus;
-
+      const cumpleEstado = !this.estadoSeleccionado || 
+        recurso.Estado === this.estadoSeleccionado;
+    //filtro por categoria
+      const cumpleCategoria =!this.categoriaSeleccionada ||
+      recurso.Categoria === this.categoriaSeleccionada;
       // Retornar true solo si cumple con todos los filtros
-      return cumpleBusqueda && cumpleCategoria && cumpleEstado;
+      return cumpleBusqueda && cumpleTipo && cumpleEstado && cumpleCategoria;
     });
   }
   
@@ -165,7 +207,7 @@ export class CatalogosComponent implements OnInit {
       let rutaDoc =  doc(this.firestore,"Recursos",this.editRecurso.recursoId);
       setDoc(rutaDoc,JSON.parse(JSON.stringify(this.editRecurso)))
       Swal.fire("Edición Exitosa")
-      let btncerrar = document.getElementById("btnCerarEditElemento")
+      let btncerrar = document.getElementById("btnCerrarEditElemento")
       btncerrar?.click()
      
       
@@ -185,7 +227,7 @@ export class CatalogosComponent implements OnInit {
  
 // Método que se ejecuta al cambiar el tipo de recurso
 onTipoRecursoChange(tipo: string) {
-  if (this.nuevoRecurso.tipoRecurso === 'Aula') {
+  if (this.nuevoRecurso.Categoria === 'AULA') {
     this.esAula = true;
   } else {
     this.esAula = false;
@@ -204,7 +246,7 @@ onTipoRecursoChange(tipo: string) {
 
 fotoPreview: string | ArrayBuffer | null = null;
 
-  // Método para procesar la imagen seleccionada
+ 
   url="recurso.FotoRecurso"
   onImageSelected(event:any){
     if(event.target.files){

@@ -21,7 +21,10 @@
   border-radius: 28px;
   background-color: white;
 }
-
+.agregar{
+  margin-bottom: 10px;
+  margin-left: 5px;
+}
 .modal-content {
   max-height: 90vh; /* Limitar el tamaño del modal al 90% de la altura de la pantalla */
   overflow-y: auto; /* Habilitar el scroll si el contenido sobrepasa el tamaño */
