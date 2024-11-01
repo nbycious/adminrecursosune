@@ -23,6 +23,7 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
 // Servicios
 import { CatalogosService } from './Componentes/catalogos/catalogos.service';
 import { FileUploadService } from './Componentes/catalogos/upload.service';
+import { SolicitudesComponent } from './Componentes/solicitudes/solicitudes.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { FileUploadService } from './Componentes/catalogos/upload.service';
     ContactoComponent,
     PerfilUsuarioComponent,
     DetallerecursoComponent,
+    SolicitudesComponent,
   ],
   imports: [
     BrowserModule,
