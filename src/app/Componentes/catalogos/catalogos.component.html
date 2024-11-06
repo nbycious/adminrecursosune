@@ -2,33 +2,37 @@
 <app-navbar></app-navbar>
 <h1 class="md:text-3xl text-2xl font-medium title-font mb-4 text-gray-900" style="margin-left: 400px; margin-top: 25px; font-size: 35px;">Catálogo de Recursos Laboratorio de Ingeniería</h1>
 <!-- Sección de filtros y agregar --> 
-<div class="container mt-4">
+<div class="container mt-6">
   <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-6">
       <div class="filter-container custom-filter-container card p-3 shadow-sm">
-        <!-- Botón solo visible para el administrador -->
-        <button type="button" *ngIf="usuario?.Rol === 'Administrador'" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalRecurso" (click)="abrirModalNuevoRecurso()">Agregar nuevo recurso</button>
-
-        <div class="subirExcel" *ngIf="usuario?.Rol === 'Administrador'">
-          <p class="agregar">Importar desde Excel</p>
-          <input type="file" (change)="onExcelUpload($event)" accept=".xlsx, .xls" aria-label="Archivo" />
-          
-
+        <!-- Contenedor para el botón de "Agregar nuevo recurso" y "Agregar desde Excel" -->
+        <div class="d-flex justify-content-center align-items-center mb-2">
+          <!-- Botón solo visible para el administrador -->
+          <div class="me-2">
+            <button type="button" *ngIf="usuario?.Rol === 'Administrador'" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalRecurso" (click)="abrirModalNuevoRecurso()">
+              Agregar manualmente
+            </button>
+          </div>  
+          <!-- Botón de "Agregar desde Excel" -->
+          <div>
+            <button type="button" *ngIf="usuario?.Rol === 'Administrador'" class="btn btn-outline-success" (click)="excelInput.click()">
+              Agregar desde Excel
+            </button>
+            <input #excelInput class="inputExcel" type="file" (change)="onExcelUpload($event)" accept=".xlsx, .xls" aria-label="Archivo" style="display: none;" />
+          </div> 
         </div>
-     
 
         <!-- Filtro de búsqueda -->
         <label for="searchTerm" class="form-label mt-2 fuentetxt">Buscar:</label>
-        <input id="searchTerm" class="form-control fuentetxt2"  [(ngModel)]="searchTerm" (input)="aplicarFiltros()">
+        <input id="searchTerm" class="form-control fuentetxt2" [(ngModel)]="searchTerm" (input)="aplicarFiltros()">
 
         <!-- Filtros de categoría y estatus en la misma fila -->
         <div class="row mt-2">
-   
-
-           <!-- Filtro de categoria -->
-           <div class="col-6">
+          <!-- Filtro de categoría -->
+          <div class="col-6">
             <label for="categoryFilter" class="form-label fuentetxt">Categoría:</label>
-            <select id="categoryfilter" class="form-select fuentetxt2" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()">
+            <select id="categoryFilter" class="form-select fuentetxt2" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()">
               <option value="">Todos</option>
               <option value="AULA">AULA</option>
               <option value="EQUIPO DE SOLDAR">EQUIPO DE SOLDAR</option>
@@ -51,11 +55,10 @@
             </select>
           </div>
         </div>
-        
-
       </div>
     </div>
-  </div>
+  
+
 
 
 
@@ -75,7 +78,6 @@
         <!-- Primer Fila -->
         <div class="row mb-3">
           <div class="col-md-6">
-            <label for="fotoRecurso">Subir Imagen:</label>
             <div class="form-group">
                 <label for="fotoRecurso">Imagen del Recurso:</label>
                 <input 
@@ -108,6 +110,7 @@
               <option value="EQUIPO PETROLERA">EQUIPO PETROLERA</option>
               <option value="EQUIPO ELECTRICO">EQUIPO ELECTRICO</option>
               <option value="EQUIPO QUIMICO">EQUIPO QUIMICO</option>
+              <option value="AULA">AULA</option>
             </select>
           </div>
           <div class="col-md-6">
@@ -180,7 +183,6 @@
         <form #editRecursoForm="ngForm">
           <div class="row mb-3">
             <div class="col-md-6">
-              <label for="fotoRecurso">Subir Imagen:</label>
               <div class="form-group">
                 <label for="fotoRecurso">Imagen del Recurso:</label>
                 <input 
@@ -284,7 +286,7 @@
       <div class="flex flex-wrap -m-4">
         <div *ngFor="let recurso of recursosFiltrados | slice:0:24" class="lg:w-1/4 md:w-1/2 p-4 w-full">
           <a [routerLink]="['/Detalle', recurso.recursoId]" class="block relative h-48 rounded overflow-hidden">
-            <img [src]="recurso.fotoRecurso" alt="fotoRecurso" class="object-cover object-center w-full h-full block"><!--aqui debe de ir la imagen agregada por el input-->
+            <img [src]="recurso.fotoRecurso" alt="fotoRecurso" class="object-cover object-center"><!--aqui debe de ir la imagen agregada por el input-->
           </a>
           <div class="mt-4">
             <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1"> {{recurso.Categoria}}</h3>
@@ -296,8 +298,8 @@
             </svg>{{recurso.Ubicacion}}</p>
             
             <div *ngIf="recurso.tipoRecurso !== 'Aula'">
-              <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline; margin-right: 3px;">Cantidad real: {{recurso.cantidadReal}}</h4>
-              <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline;">Cantidad disp: {{recurso.cantidadDisp}}</h4>
+              <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline; margin-right: 3px;">En inventario: {{recurso.cantidadReal}}</h4>
+              <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline;">Disponible: {{recurso.cantidadDisp}}</h4>
                 
             </div>
          

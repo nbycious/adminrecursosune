@@ -21,6 +21,29 @@
   border-radius: 28px;
   background-color: white;
 }
+.custom-filter-container {
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.custom-filter-container .btn-success {
+  width: 100%;
+  font-weight: bold;
+}
+
+.subirExcel {
+  display: flex;
+  align-items: center;
+}
+
+
+
+
+
+.inputExcel {
+  display: none; /* Oculta el input de archivo */
+}
+
 .agregar{
   margin-bottom: 10px;
   margin-left: 5px;
@@ -31,13 +54,6 @@
 }
 
   
-  .add-btn {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-  }
   
   .modal-title{
     font-size: 30px;
