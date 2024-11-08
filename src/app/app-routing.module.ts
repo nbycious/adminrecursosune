@@ -8,6 +8,7 @@ import { AuthGuard } from './auth.guard';  // Importar el guard
 import { ContactoComponent } from './Componentes/contacto/contacto.component';
 import { PerfilUsuarioComponent } from './Componentes/perfil-usuario/perfil-usuario.component';
 import { DetallerecursoComponent } from './Componentes/detallerecurso/detallerecurso.component';
+import { SolicitudesComponent } from './Componentes/solicitudes/solicitudes.component';
 
 
 const routes: Routes = [
@@ -17,7 +18,8 @@ const routes: Routes = [
   {path: "Catalogos", component: CatalogosComponent},
   {path:"Contacto", component: ContactoComponent, canActivate: [AuthGuard], data: { roles: ['Alumno'] }},
   {path: "Perfil", component: PerfilUsuarioComponent},
-  {path: "Detalle", component:DetallerecursoComponent}
+  {path: "Detalle", component:DetallerecursoComponent},
+  {path: "Solicitudes", component: SolicitudesComponent}
  
 ];
 

@@ -1,1 +1,123 @@
-<p>solicitudes works!</p>
+<app-navbar></app-navbar>
+<h1 class="md:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 text-center" style=" margin-top: 25px; font-size: 35px;">Solicitar un recurso</h1>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-sm-6">
+            <div class="filter-container custom-filter-container card p-3 shadow-sm"  data-bs-toggle="modal" data-bs-target="#modalSolicitud" (click)="abrirModalNuevaSolicitud()" >
+                <button type="button" class="btn btn-outline-success">Nueva solicitud</button>
+                
+            </div>
+            <div class="col-6" style="margin-bottom: 60px;">
+                <label for="categoryFilter" class="form-label fuentetxt" style="margin-top: 10px;">Filtrar por:</label>
+                <select id="categoryfilter" class="form-select fuentetxt2" ><!---[(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()"-->
+                  <option value="">Todas</option>
+                  <option value="">Pendientes</option>
+                  <option value="Completadas">Completadas</option>
+                  <option value="En curso">En curso</option>
+                  <option value="Rechazadas">Rechazadas</option>
+                </select>
+              </div>
+            </div>
+           
+
+    </div>
+    <h3 class="text-center">Mis solicitudes</h3>
+    <div class="container">
+      <table class="table table-bordered text-center">
+        <thead class="table-light">
+            <tr>
+                <th scope="col">Fecha Solicitud</th>
+                <th scope="col">Fecha de Préstamo</th>
+                <th scope="col">Fecha de Devolución</th>
+                <th scope="col">Recursos Solicitados</th>
+                <th scope="col">Estatus</th>
+               
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let solicitud of listaSolicitudes">
+                <td>{{ solicitud.fechaSolicitud }}</td>
+                <td>{{ solicitud.fechaUso }}</td>
+                <td>{{ solicitud.fechaFin }}</td>
+                <td>{{ solicitud.recursos }}</td>
+                
+            </tr>
+        </tbody>
+      </table>
+      
+    </div>
+</div>
+
+
+
+
+<!--modales-->
+<!--modal nueva solicitud-->
+<div class="modal fade" id="modalSolicitud" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title fs-5 text-center" id="exampleModalLabel">Nueva solicitud de material</h3>
+          <button type="button" id="btnCerrarModalElemento" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+         
+          <form #solicitudForm="ngForm" (ngSubmit)="agregarSolicitud(solicitudForm)" novalidate>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="nombreSolicitante">Nombre del solicitante:</label>
+                  <input type="text" id="nombreSolicitante" class="form-control"  [(ngModel)]="nuevaSolicitud.nombreSolicitante" name="nombreSolicitante" required>
+                  
+                </div>
+                <div class="col-md-6">
+                  <label for="nombreRecurso">Matrícula:</label>
+                  <input type="text" id="nombreSolicitante" class="form-control" [(ngModel)]="nuevaSolicitud.matriculaSolic" name="matriculaSolic" required>
+                  
+                </div>
+            </div>
+              
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="carrera">Carrera:</label>
+                  <select id="carrera" class="form-control" name="carreraSolicitante" required [(ngModel)]="nuevaSolicitud.carreraSolicitante">
+                    <option value="" disabled selected>Selecciona tu carrera</option>
+                    <option value ="IIS" >IIS</option>
+                    <option value ="ISCE" >ISCE</option>
+                    <option value ="IP">IP</option>
+                    <option value ="IA" >IA</option>
+                  </select>
+                </div>
+                  <div class="col-md-6">
+                    <label for="fechaSoli">Fecha de solicitud: </label>
+                    <br>
+                      <input id="fechaSoli" type="date" style="width: 280px; " name="fechaSolicitud"[(ngModel)]="nuevaSolicitud.fechaSolicitud" required >
+                  </div>
+                 
+              </div>
+
+              
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" [disabled]="!solicitudForm.valid" (click)="agregarSolicitud(solicitudForm)" >Enviar solicitud</button> 
+        </div>
+        </form>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+     
+
+        
+
+   

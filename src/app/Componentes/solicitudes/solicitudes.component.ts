@@ -1,4 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { Usuario, Recurso, Solicitud } from 'src/app/Clases/bd';
+import { Firestore, collection, collectionData, query, where } from '@angular/fire/firestore';
+import Swal from 'sweetalert2';
+import { Router } from '@angular/router';
+import { deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { NgForm } from '@angular/forms';
+
 
 @Component({
   selector: 'app-solicitudes',
@@ -6,10 +13,49 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./solicitudes.component.css']
 })
 export class SolicitudesComponent implements OnInit {
+  
+  solicitud: Solicitud[] = [];
+  nuevaSolicitud = new Solicitud();
+  listaSolicitudes: Solicitud[] = new Array();
 
-  constructor() { }
-
+  solisBD = collection(this.firestore, "Solicitudes")
+  
+  constructor(private firestore: Firestore,
+    private router : Router
+  ) { }
   ngOnInit(): void {
+    collectionData(this.solisBD, { idField: 'id' }).subscribe((data: any) => {
+      this.listaSolicitudes = data;
+    });
   }
 
-}
+
+  agregarSolicitud(form: NgForm){
+    if (form.valid){
+    this.nuevaSolicitud.idSolicitud = this.generateRandomString(15);
+    let rutaDoc = doc(this.firestore, "Solicitudes", this.nuevaSolicitud.idSolicitud)
+    setDoc(rutaDoc, JSON.parse(JSON.stringify(this.nuevaSolicitud)))
+    console.log('Formulario válido, agregando solicitud:', this.nuevaSolicitud);
+    form.resetForm()
+    Swal.fire("Solicitud enviada exitosamente");
+    this.listaSolicitudes.push(this.nuevaSolicitud); 
+    let btncerrar = document.getElementById("btnCerrarModalElemento")
+    btncerrar?.click();
+    }
+    
+  }
+  abrirModalNuevaSolicitud(){
+    this.nuevaSolicitud = new Solicitud();
+  }
+  generateRandomString = (num: number) => {
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result1 = '';
+      const charactersLength = characters.length;
+      for (let i = 0; i < num; i++) {
+          result1 += characters.charAt(Math.floor(Math.random() * charactersLength));
+      }
+
+      return result1;
+  }
+
+  }
