@@ -70,7 +70,15 @@ body {
     margin: 20px; /* Puedes ajustar este valor */
     border: 1px solid white
 }
+.boton a {
+    text-decoration: none; /* Quita el subrayado por defecto */
+    color: white; /* Color inicial del texto - ajusta según necesites */
+}
 
+.boton a:hover {
+    text-decoration: none; /* Asegura que no haya subrayado en hover */
+    color: white; /* Cambia este color al que prefieras para el hover */
+}
 .boton:hover {
     transform: scale(1.05); 
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
