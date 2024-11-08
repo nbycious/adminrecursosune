@@ -1,10 +1,12 @@
 
 <app-navbar></app-navbar>
-<h1 class="md:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 text-center" style="margin-top: 25px; font-size: 35px;">
+<h1
+  class="md:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 text-center"
+  style="margin-top: 25px; font-size: 35px;">
   Catálogo de Recursos Laboratorio de Ingeniería
 </h1>
 
-<!-- Sección de filtros y agregar --> 
+<!-- Sección de filtros y agregar -->
 <div class="container mt-6">
   <div class="row justify-content-center">
     <div class="col-6">
@@ -13,30 +15,39 @@
         <div class="d-flex justify-content-center align-items-center mb-2">
           <!-- Botón solo visible para el administrador -->
           <div class="me-2">
-            <button type="button" *ngIf="usuario?.Rol === 'Administrador'" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalRecurso" (click)="abrirModalNuevoRecurso()">
+            <button type="button" *ngIf="usuario?.Rol === 'Administrador'"
+              class="btn btn-outline-success" data-bs-toggle="modal"
+              data-bs-target="#modalRecurso" (click)="abrirModalNuevoRecurso()">
               Agregar manualmente
             </button>
-          </div>  
+          </div>
           <!-- Botón de "Agregar desde Excel" -->
           <div>
-            <button type="button" *ngIf="usuario?.Rol === 'Administrador'" class="btn btn-outline-success" (click)="excelInput.click()">
+            <button type="button" *ngIf="usuario?.Rol === 'Administrador'"
+              class="btn btn-outline-success" (click)="excelInput.click()">
               Agregar desde Excel
             </button>
-            <input #excelInput class="inputExcel" type="file" (change)="onExcelUpload($event)" accept=".xlsx, .xls" aria-label="Archivo" style="display: none;" />
-          </div> 
+            <input #excelInput class="inputExcel" type="file"
+              (change)="onExcelUpload($event)" accept=".xlsx, .xls"
+              aria-label="Archivo" style="display: none;" />
+          </div>
         </div>
 
         <!-- Filtro de búsqueda -->
-        <label for="searchTerm" class="form-label mt-2 fuentetxt">Buscar:</label>
-        <input id="searchTerm" class="form-control fuentetxt2" [(ngModel)]="searchTerm" (input)="aplicarFiltros()">
+        <label for="searchTerm"
+          class="form-label mt-2 fuentetxt">Buscar:</label>
+        <input id="searchTerm" class="form-control fuentetxt2"
+          [(ngModel)]="searchTerm" (input)="aplicarFiltros()">
 
         <!-- Filtros de categoría y estatus en la misma fila -->
         <div class="row mt-2">
           <!-- Filtro de categoría -->
           <div class="col-6">
-            <label for="categoryFilter" class="form-label fuentetxt">Categoría:</label>
-            <select id="categoryFilter" class="form-select fuentetxt2" [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()">
-              <option value="">Todos</option>
+            <label for="categoryFilter"
+              class="form-label fuentetxt">Categoría:</label>
+            <select id="categoryFilter" class="form-select fuentetxt2"
+              [(ngModel)]="categoriaSeleccionada" (change)="aplicarFiltros()">
+              <option value>Todos</option>
               <option value="AULA">AULA</option>
               <option value="EQUIPO DE SOLDAR">EQUIPO DE SOLDAR</option>
               <option value="EQUIPO DE SEGURIDAD">EQUIPO DE SEGURIDAD</option>
@@ -50,9 +61,11 @@
 
           <!-- Filtro de estatus -->
           <div class="col-6">
-            <label for="statusFilter" class="form-label fuentetxt">Estatus:</label>
-            <select id="statusFilter" class="form-select fuentetxt2" [(ngModel)]="estadoSeleccionado" (change)="aplicarFiltros()">
-              <option value="">Todos</option>
+            <label for="statusFilter"
+              class="form-label fuentetxt">Estatus:</label>
+            <select id="statusFilter" class="form-select fuentetxt2"
+              [(ngModel)]="estadoSeleccionado" (change)="aplicarFiltros()">
+              <option value>Todos</option>
               <option value="Activo">Activo</option>
               <option value="Inactivo">Inactivo</option>
             </select>
@@ -60,268 +73,377 @@
         </div>
       </div>
     </div>
-  
 
+    <!--modales-->
+    <!--modal nuevo recurso-->
+    <div class="modal fade" id="modalRecurso" tabindex="-1"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div
+        class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo
+              Recurso</h1>
+            <button type="button" id="btnCerrarModalElemento" class="btn-close"
+              data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
 
+            <form #recursoForm="ngForm">
 
+              <!-- Primer Fila -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="fotoRecurso">Imagen del Recurso:</label>
+                    <input
+                      type="file"
+                      class="form-control"
+                      (change)="onFileSelected($event)"
+                      accept="image/*">
 
-<!--modales-->
-<!--modal nuevo recurso-->
-<div class="modal fade" id="modalRecurso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h1 class="modal-title fs-5" id="exampleModalLabel">Nuevo Recurso</h1>
-      <button type="button" id="btnCerrarModalElemento" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
-     
-      <form #recursoForm="ngForm">
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="nombreRecurso">Nombre:</label>
+                  <input type="text" id="nombreRecurso" class="form-control"
+                    [(ngModel)]="nuevoRecurso.nombreRecurso"
+                    name="nombreRecurso" required>
 
-        <!-- Primer Fila -->
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <div class="form-group">
-                <label for="fotoRecurso">Imagen del Recurso:</label>
-                <input 
-                  type="file" 
-                  class="form-control" 
-                  (change)="onFileSelected($event)"
-                  accept="image/*">
-                
+                </div>
               </div>
-          </div>
-          <div class="col-md-6">
-            <label for="nombreRecurso">Nombre:</label>
-            <input type="text" id="nombreRecurso" class="form-control" [(ngModel)]="nuevoRecurso.nombreRecurso" name="nombreRecurso" required>
-            
-          </div>
-        </div>
 
-        
-
-        <!-- Segunda Fila -->
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="Categoria">Categoría:</label>
-            <select id="Categoria" class="form-control" [(ngModel)]="nuevoRecurso.Categoria" (ngModelChange)="onTipoRecursoChange($event)" name="Categoria" required>
-              <option value="" disabled selected>Selecciona un tipo</option>
-              <option value="EQUIPO DE SOLDAR">EQUIPO DE SOLDAR</option>
-              <option value="EQUIPO DE SEGURIDAD">EQUIPO DE SEGURIDAD</option>
-              <option value="HERRAMIENTA">HERRAMIENTA</option>
-              <option value="IMPRESORA 3D">IMPRESORA 3D</option>
-              <option value="EQUIPO PETROLERA">EQUIPO PETROLERA</option>
-              <option value="EQUIPO ELECTRICO">EQUIPO ELECTRICO</option>
-              <option value="EQUIPO QUIMICO">EQUIPO QUIMICO</option>
-              <option value="AULA">AULA</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="estadoRecurso">Estado del Recurso:</label>
-            <select id="estadoRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Estado" name="estadoRecurso" required>
-              <option value="" disabled selected>Selecciona un estado</option>
-              <option value="Activo">Activo</option>
-              <option value="Inactivo">Inactivo</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Tercera Fila -->
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="ubicacionRecurso">Ubicación:</label>
-            <select id="ubicacionRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Ubicacion" name="ubicacionRecurso" required>
-              <option value="" disabled selected>Selecciona una ubicación</option>
-              <!-- Si el tipo de recurso es "Aula", muestra ubicaciones específicas de aulas -->
-              <option *ngIf="esAula" value="Quinto piso, edif. principal">Quinto piso, edif. principal</option>
-              <option *ngIf="esAula" value="Segundo piso, edif. principal">Segundo piso, edif. principal</option>
-              <!-- Opciones para otros tipos de recurso -->
-              <option *ngIf="!esAula" value="PIAR">PIAR</option>
-              <option *ngIf="!esAula" value="REDES">REDES</option>
-            </select>
-          </div>
-          <!-- Solo mostrar el campo Costo si el tipo de recurso NO es "Aula" -->
-          <div class="col-md-6" *ngIf="!esAula">
-            <label for="costo">Costo:</label>
-            <input type="text" id="costoRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Costo" name="costoRecurso">
-          </div>
-        </div>
-
-        <!-- Cuarta Fila -->
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="descripcionRecurso">Descripción:</label>
-            <textarea id="descripcionRecurso" class="form-control" [(ngModel)]="nuevoRecurso.descripcion" name="descripcionRecurso"></textarea>
-          </div>
-          <!-- Solo mostrar el campo Cantidad si el tipo de recurso NO es "Aula" -->
-          <div class="col-md-6" *ngIf="!esAula">
-            <label for="clave">Cantidad:</label>
-            <input type="text" id="cantidadReal" class="form-control" [(ngModel)]="nuevoRecurso.cantidadReal" name="cantidadReal" required>
-          </div>
-          <div class="col-md-6">
-            <label for="clave">Clave:</label>
-            <input type="text" id="claveRecurso" class="form-control" [(ngModel)]="nuevoRecurso.claveAdmin" name="claveRecurso">
-          </div>
-        </div>
-
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-success" [disabled]="recursoForm.invalid" (click)="agregarRecurso(recursoForm)">Agregar</button>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- Modal Editar Recurso -->
-<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Recurso</h1>
-        <button type="button" id="btnCerrarModalElemento" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Primer Fila -->
-        <form #editRecursoForm="ngForm">
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label for="fotoRecurso">Imagen del Recurso:</label>
-                <input 
-                  type="file" 
-                  class="form-control" 
-                  (change)="onFileSelected($event)"
-                  accept="image/*">
-                
+              <!-- Segunda Fila -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="Categoria">Categoría:</label>
+                  <select id="Categoria" class="form-control"
+                    [(ngModel)]="nuevoRecurso.Categoria"
+                    (ngModelChange)="onTipoRecursoChange($event)"
+                    name="Categoria" required>
+                    <option value disabled selected>Selecciona un tipo</option>
+                    <option value="EQUIPO DE SOLDAR">EQUIPO DE SOLDAR</option>
+                    <option value="EQUIPO DE SEGURIDAD">EQUIPO DE
+                      SEGURIDAD</option>
+                    <option value="HERRAMIENTA">HERRAMIENTA</option>
+                    <option value="IMPRESORA 3D">IMPRESORA 3D</option>
+                    <option value="EQUIPO PETROLERA">EQUIPO PETROLERA</option>
+                    <option value="EQUIPO ELECTRICO">EQUIPO ELECTRICO</option>
+                    <option value="EQUIPO QUIMICO">EQUIPO QUIMICO</option>
+                    <option value="AULA">AULA</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="estadoRecurso">Estado del Recurso:</label>
+                  <select id="estadoRecurso" class="form-control"
+                    [(ngModel)]="nuevoRecurso.Estado" name="estadoRecurso"
+                    required>
+                    <option value disabled selected>Selecciona un
+                      estado</option>
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <div class="col-md-6">
-              <label for="nombreRecurso">Nombre:</label>
-              <input type="text" id="nombreRecurso" class="form-control" [(ngModel)]="editRecurso.nombreRecurso" name="nombreRecurso" required #nombreRecurso="ngModel">
-              <div *ngIf="nombreRecurso.invalid && nombreRecurso.touched" class="text-danger">
-                El nombre del recurso es obligatorio.
-              </div>
-            </div>
-          </div>
 
-          <!-- Segunda Fila -->
-          <div class="row mb-3">
-            <div class="col-md-6">
-              <label for="Categoria">Categoría:</label>
-              <select id="Categoria" class="form-control" [(ngModel)]="nuevoRecurso.Categoria" (ngModelChange)="onTipoRecursoChange($event)" name="Categoria" required>
-                <option value="" disabled selected>Selecciona un tipo</option>
-                <option value="AULA">AULA</option>
-                <option value="EQUIPO DE SOLDAR">EQUIPO DE SOLDAR</option>
-              <option value="EQUIPO DE SEGURIDAD">EQUIPO DE SEGURIDAD</option>
-              <option value="HERRAMIENTA">HERRAMIENTA</option>
-              <option value="IMPRESORA 3D">IMPRESORA 3D</option>
-              <option value="EQUIPO PETROLERA">EQUIPO PETROLERA</option>
-              <option value="EQUIPO ELECTRICO">EQUIPO ELECTRICO</option>
-              <option value="EQUIPO QUIMICO">EQUIPO QUIMICO</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label for="estadoRecurso">Estado del Recurso:</label>
-              <select id="estadoRecurso" class="form-control" [(ngModel)]="editRecurso.Estado" name="estadoRecurso" required #estadoRecurso="ngModel">
-                <option value="">Seleccione un estado</option>
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo</option>
-              </select>
-              <div *ngIf="estadoRecurso.invalid && estadoRecurso.touched" class="text-danger">
-                El estado del recurso es obligatorio.
+              <!-- Tercera Fila -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="ubicacionRecurso">Ubicación:</label>
+                  <select id="ubicacionRecurso" class="form-control"
+                    [(ngModel)]="nuevoRecurso.Ubicacion" name="ubicacionRecurso"
+                    required>
+                    <option value disabled selected>Selecciona una
+                      ubicación</option>
+                    <!-- Si el tipo de recurso es "Aula", muestra ubicaciones específicas de aulas -->
+                    <option *ngIf="esAula"
+                      value="Quinto piso, edif. principal">Quinto piso, edif.
+                      principal</option>
+                    <option *ngIf="esAula"
+                      value="Segundo piso, edif. principal">Segundo piso, edif.
+                      principal</option>
+                    <!-- Opciones para otros tipos de recurso -->
+                    <option *ngIf="!esAula" value="PIAR">PIAR</option>
+                    <option *ngIf="!esAula" value="REDES">REDES</option>
+                  </select>
+                </div>
+                <!-- Solo mostrar el campo Costo si el tipo de recurso NO es "Aula" -->
+                <div class="col-md-6" *ngIf="!esAula">
+                  <label for="costo">Costo:</label>
+                  <input type="text" id="costoRecurso" class="form-control"
+                    [(ngModel)]="nuevoRecurso.Costo" name="costoRecurso">
+                </div>
               </div>
-            </div>
-          </div>
 
-        
-        <!-- Tercera Fila -->
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="ubicacionRecurso">Ubicación:</label>
-            <select id="ubicacionRecurso" class="form-control" [(ngModel)]="editRecurso.Ubicacion" name="ubicacionRecurso" required>
-              <option value="" disabled selected>Selecciona una ubicación</option>
-              <!-- Si el tipo de recurso es "Aula", muestra ubicaciones específicas de aulas -->
-              <option *ngIf="esAula" value="Quinto piso, edif. principal">Quinto piso, edif. principal</option>
-              <option *ngIf="esAula" value="Segundo piso, edif. principal">Segundo piso, edif. principal</option>
-              <!-- Opciones para otros tipos de recurso -->
-              <option *ngIf="!esAula" value="PIAR">PIAR</option>
-              <option *ngIf="!esAula" value="REDES">REDES</option>
-            </select>
+              <!-- Cuarta Fila -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="descripcionRecurso">Descripción:</label>
+                  <textarea id="descripcionRecurso" class="form-control"
+                    [(ngModel)]="nuevoRecurso.descripcion"
+                    name="descripcionRecurso"></textarea>
+                </div>
+                <!-- Solo mostrar el campo Cantidad si el tipo de recurso NO es "Aula" -->
+                <div class="col-md-6" *ngIf="!esAula">
+                  <label for="clave">Cantidad:</label>
+                  <input type="text" id="cantidadReal" class="form-control"
+                    [(ngModel)]="nuevoRecurso.cantidadReal" name="cantidadReal"
+                    required>
+                </div>
+                <div class="col-md-6">
+                  <label for="clave">Clave:</label>
+                  <input type="text" id="claveRecurso" class="form-control"
+                    [(ngModel)]="nuevoRecurso.claveAdmin" name="claveRecurso">
+                </div>
+              </div>
+
+            </form>
           </div>
-          <!-- Solo mostrar el campo Costo si el tipo de recurso NO es "Aula" -->
-          <div class="col-md-6" *ngIf="!esAula">
-            <label for="costo">Costo:</label>
-            <input type="text" id="costoRecurso" class="form-control" [(ngModel)]="editRecurso.Costo" name="costoRecurso">
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success"
+              [disabled]="recursoForm.invalid"
+              (click)="agregarRecurso(recursoForm)">Agregar</button>
           </div>
         </div>
-
-        <!-- Cuarta Fila -->
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="descripcionRecurso">Descripción:</label>
-            <textarea id="descripcionRecurso" class="form-control" [(ngModel)]="editRecurso.descripcion" name="descripcionRecurso"></textarea>
-          </div>
-          <!-- Solo mostrar el campo Cantidad si el tipo de recurso NO es "Aula" -->
-          <div class="col-md-6" *ngIf="!esAula">
-            <label for="clave">Cantidad:</label>
-            <input type="text" id="cantidadReal" class="form-control" [(ngModel)]="editRecurso.cantidadReal" name="cantidadReal" required>
-          </div>
-          <div class="col-md-6">
-            <label for="clave">Clave:</label>
-            <input type="text" id="claveRecurso" class="form-control" [(ngModel)]="editRecurso.claveAdmin" name="claveRecurso">
-          </div>
-        </div>
-
-            
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" [disabled]="editRecursoForm.invalid" (click)="editarRecurso(editRecursoForm)">Editar</button>
       </div>
     </div>
-  </div>
-</div>
 
-  <!-- contenedor de recursos-->
-  <section class="text-gray-600 body-font">
-    <div class="container px-5 py-24 mx-auto">
-      <div class="flex flex-wrap -m-4">
-        <div *ngFor="let recurso of recursosFiltrados | slice:0:24" class="lg:w-1/4 md:w-1/2 p-4 w-full">
-          <a [routerLink]="['/Detalle', recurso.recursoId]" class="block relative h-48 rounded overflow-hidden">
-            <img [src]="recurso.fotoRecurso" alt="fotoRecurso" class="object-cover object-center"><!--aqui debe de ir la imagen agregada por el input-->
-          </a>
-          <div class="mt-4">
-            <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1"> {{recurso.Categoria}}</h3>
-           
-            <h2 class="text-gray-900 title-font text-lg font-medium">{{recurso.nombreRecurso}}</h2>
-            <p class="mt-1"><svg style="display: inline" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
-              <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
-              <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
-            </svg>{{recurso.Ubicacion}}</p>
-            
-            <div *ngIf="recurso.tipoRecurso !== 'Aula'">
-              <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline; margin-right: 3px;">En inventario: {{recurso.cantidadReal}}</h4>
-              <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline;">Disponible: {{recurso.cantidadDisp}}</h4>
-                
+    <!-- Modal Editar Recurso -->
+    <div class="modal fade" id="modalEditar" tabindex="-1"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div
+        class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Editar
+              Recurso</h1>
+            <button type="button" id="btnCerrarModalElemento" class="btn-close"
+              data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Primer Fila -->
+            <form #editRecursoForm="ngForm">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="fotoRecurso">Imagen del Recurso:</label>
+                    <input
+                      type="file"
+                      class="form-control"
+                      (change)="onFileSelected($event)"
+                      accept="image/*">
+
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label for="nombreRecurso">Nombre:</label>
+                  <input type="text" id="nombreRecurso" class="form-control"
+                    [(ngModel)]="editRecurso.nombreRecurso" name="nombreRecurso"
+                    required #nombreRecurso="ngModel">
+                  <div *ngIf="nombreRecurso.invalid && nombreRecurso.touched"
+                    class="text-danger">
+                    El nombre del recurso es obligatorio.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Segunda Fila -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="Categoria">Categoría:</label>
+                  <select id="Categoria" class="form-control"
+                    [(ngModel)]="nuevoRecurso.Categoria"
+                    (ngModelChange)="onTipoRecursoChange($event)"
+                    name="Categoria" required>
+                    <option value disabled selected>Selecciona un tipo</option>
+                    <option value="AULA">AULA</option>
+                    <option value="EQUIPO DE SOLDAR">EQUIPO DE SOLDAR</option>
+                    <option value="EQUIPO DE SEGURIDAD">EQUIPO DE
+                      SEGURIDAD</option>
+                    <option value="HERRAMIENTA">HERRAMIENTA</option>
+                    <option value="IMPRESORA 3D">IMPRESORA 3D</option>
+                    <option value="EQUIPO PETROLERA">EQUIPO PETROLERA</option>
+                    <option value="EQUIPO ELECTRICO">EQUIPO ELECTRICO</option>
+                    <option value="EQUIPO QUIMICO">EQUIPO QUIMICO</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="estadoRecurso">Estado del Recurso:</label>
+                  <select id="estadoRecurso" class="form-control"
+                    [(ngModel)]="editRecurso.Estado" name="estadoRecurso"
+                    required #estadoRecurso="ngModel">
+                    <option value>Seleccione un estado</option>
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
+                  </select>
+                  <div *ngIf="estadoRecurso.invalid && estadoRecurso.touched"
+                    class="text-danger">
+                    El estado del recurso es obligatorio.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tercera Fila -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="ubicacionRecurso">Ubicación:</label>
+                  <select id="ubicacionRecurso" class="form-control"
+                    [(ngModel)]="editRecurso.Ubicacion" name="ubicacionRecurso"
+                    required>
+                    <option value disabled selected>Selecciona una
+                      ubicación</option>
+                    <!-- Si el tipo de recurso es "Aula", muestra ubicaciones específicas de aulas -->
+                    <option *ngIf="esAula"
+                      value="Quinto piso, edif. principal">Quinto piso, edif.
+                      principal</option>
+                    <option *ngIf="esAula"
+                      value="Segundo piso, edif. principal">Segundo piso, edif.
+                      principal</option>
+                    <!-- Opciones para otros tipos de recurso -->
+                    <option *ngIf="!esAula" value="PIAR">PIAR</option>
+                    <option *ngIf="!esAula" value="REDES">REDES</option>
+                  </select>
+                </div>
+                <!-- Solo mostrar el campo Costo si el tipo de recurso NO es "Aula" -->
+                <div class="col-md-6" *ngIf="!esAula">
+                  <label for="costo">Costo:</label>
+                  <input type="text" id="costoRecurso" class="form-control"
+                    [(ngModel)]="editRecurso.Costo" name="costoRecurso">
+                </div>
+              </div>
+
+              <!-- Cuarta Fila -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="descripcionRecurso">Descripción:</label>
+                  <textarea id="descripcionRecurso" class="form-control"
+                    [(ngModel)]="editRecurso.descripcion"
+                    name="descripcionRecurso"></textarea>
+                </div>
+                <!-- Solo mostrar el campo Cantidad si el tipo de recurso NO es "Aula" -->
+                <div class="col-md-6" *ngIf="!esAula">
+                  <label for="clave">Cantidad:</label>
+                  <input type="text" id="cantidadReal" class="form-control"
+                    [(ngModel)]="editRecurso.cantidadReal" name="cantidadReal"
+                    required>
+                </div>
+                <div class="col-md-6">
+                  <label for="clave">Clave:</label>
+                  <input type="text" id="claveRecurso" class="form-control"
+                    [(ngModel)]="editRecurso.claveAdmin" name="claveRecurso">
+                </div>
+              </div>
+
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-success"
+              [disabled]="editRecursoForm.invalid"
+              (click)="editarRecurso(editRecursoForm)">Editar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- contenedor de recursos-->
+    <section class="text-gray-600 body-font">
+      <div class="container px-5 py-24 mx-auto">
+        <div class="flex flex-wrap -m-4">
+          <div *ngFor="let recurso of recursosFiltrados | slice:0:24"
+            class="lg:w-1/4 md:w-1/2 p-4 w-full">
+            <a [routerLink]="['/Detalle', recurso.recursoId]"
+              class="block relative h-48 rounded overflow-hidden">
+              <img [src]="recurso.fotoRecurso" alt="fotoRecurso"
+                class="object-cover object-center"><!--aqui debe de ir la imagen agregada por el input-->
+            </a>
+            <div class="mt-4">
+              <h3 class="text-gray-500 text-xs tracking-widest title-font mb-1">
+                {{recurso.Categoria}}</h3>
+
+              <h2
+                class="text-gray-900 title-font text-lg font-medium">{{recurso.nombreRecurso}}</h2>
+              <p class="mt-1"><svg style="display: inline"
+                  xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                  fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+                  <path
+                    d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10" />
+                  <path
+                    d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                </svg>{{recurso.Ubicacion}}</p>
+
+              <div *ngIf="recurso.tipoRecurso !== 'Aula'">
+                <h4
+                  class="text-gray-500 text-xs tracking-widest title-font mb-1"
+                  style="display: inline; margin-right: 3px;">En inventario:
+                  {{recurso.cantidadReal}}</h4>
+                <h4
+                  class="text-gray-500 text-xs tracking-widest title-font mb-1"
+                  style="display: inline;">Disponible:
+                  {{recurso.cantidadDisp}}</h4>
+
+              </div>
+
+              <!-- Contenedor emergente de detalles -->
+              <div *ngIf="recursoSeleccionado" class="detalles-popup">
+                <div class="detalles-contenido">
+                  <button class="cerrar-popup"
+                    (click)="cerrarDetalles()">✖</button>
+                  <img [src]="recursoSeleccionado.fotoRecurso"
+                    alt="Detalle Imagen" class="detalle-imagen">
+                  <h3>{{ recursoSeleccionado.nombreRecurso }}</h3>
+                  <p><strong>Categoría:</strong> {{
+                    recursoSeleccionado.Categoria }}</p>
+                  <p><strong>Estado:</strong> {{ recursoSeleccionado.Estado
+                    }}</p>
+                  <p><strong>Ubicación:</strong> {{
+                    recursoSeleccionado.Ubicacion }}</p>
+                  <p><strong>Cantidad:</strong> {{
+                    recursoSeleccionado.cantidadReal }}</p>
+                  <button class="solicitar-btn"
+                    [routerLink]="['/solicitar', recursoSeleccionado.recursoId]">
+                    Solicitar
+                  </button>
+                </div>
+              </div>
             </div>
-         
 
             <!--Botones de editar y eliminar solo visibles para admin-->
-            <button  *ngIf="usuario?.Rol === 'Administrador'" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditar" (click)="editarModalRecurso(recurso)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-              <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-              <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-            </svg></button>
+            <button *ngIf="usuario?.Rol === 'Administrador'" type="button"
+              class="btn btn-primary" data-bs-toggle="modal"
+              data-bs-target="#modalEditar"
+              (click)="editarModalRecurso(recurso)"><svg
+                xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                fill="currentColor" class="bi bi-pencil-square"
+                viewBox="0 0 16 16">
+                <path
+                  d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                <path fill-rule="evenodd"
+                  d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+              </svg></button>
             <!--boton de desactivar recurso -->
-            <button  *ngIf="usuario?.Rol === 'Administrador' && recurso.Estado=='Activo'" type="button" class="btn btn-outline-danger" (click)="desactivarRecurso(recurso)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-              <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-            </svg></button>
-            
-            <button  *ngIf="usuario?.Rol === 'Administrador' && recurso.Estado=='Inactivo'" type="button" class="btn btn-success" (click)="activarRecurso(recurso)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-              <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
-              <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-            </svg></button>
+            <button
+              *ngIf="usuario?.Rol === 'Administrador' && recurso.Estado=='Activo'"
+              type="button" class="btn btn-outline-danger"
+              (click)="desactivarRecurso(recurso)"><svg
+                xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                <path
+                  d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                <path
+                  d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+              </svg></button>
+
+            <button
+              *ngIf="usuario?.Rol === 'Administrador' && recurso.Estado=='Inactivo'"
+              type="button" class="btn btn-success"
+              (click)="activarRecurso(recurso)"><svg
+                xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                fill="currentColor" class="bi bi-plus-square"
+                viewBox="0 0 16 16">
+                <path
+                  d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+              </svg></button>
           </div>
         </div>
-       

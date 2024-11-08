@@ -223,7 +223,17 @@ export class CatalogosComponent implements OnInit {
 }
 
 
+recursoSeleccionado: Recurso | null = null; // Para almacenar el recurso seleccionado
 
+// Mostrar detalles del recurso
+mostrarDetalles(recurso: Recurso) {
+  this.recursoSeleccionado = recurso;
+}
+
+// Cerrar el contenedor de detalles
+cerrarDetalles() {
+  this.recursoSeleccionado = null;
+}
  
 // Método que se ejecuta al cambiar el tipo de recurso
 onTipoRecursoChange(tipo: string) {

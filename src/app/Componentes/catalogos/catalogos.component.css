@@ -1,26 +1,26 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500&display=swap');
-.welcome{
+
+.welcome {
   padding: 15px;
   font-family: 'Roboto Slab';
 }
-.fondo{
-    background-color: white;
-    width: 100%;
-    height: 987px;
-}
-.container{
 
+.fondo {
+  background-color: white;
+  width: 100%;
+  height: 987px;
+}
+
+.container {
   width: 1251px;
   height: 889px;
-
-
   border-radius: 28px;
   background-color: white;
 }
+
 .custom-filter-container {
   border-radius: 8px;
   border: 1px solid #e0e0e0;
@@ -36,41 +36,116 @@
   align-items: center;
 }
 
-
-
-
-
 .inputExcel {
   display: none; /* Oculta el input de archivo */
 }
 
-.agregar{
+.agregar {
   margin-bottom: 10px;
   margin-left: 5px;
 }
+
 .modal-content {
   max-height: 90vh; /* Limitar el tamaño del modal al 90% de la altura de la pantalla */
   overflow-y: auto; /* Habilitar el scroll si el contenido sobrepasa el tamaño */
 }
 
-  
-  
-  .modal-title{
-    font-size: 30px;
-    font-weight: bold;
-  }
-  
-  .modal-content {
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    width: 800px;
-    align-self: center;
-  }
-  
-  button {
-    margin: 10px;
-    padding: 10px;
-    cursor: pointer;
-  }
-  
+.modal-title {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 800px;
+  align-self: center;
+}
+
+button {
+  margin: 10px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+/* Catálogo de productos */
+.catalogo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+/* Tarjeta de recurso */
+.recurso-card {
+  width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.recurso-card:hover {
+  transform: scale(1.05);
+}
+
+.recurso-imagen {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.recurso-info {
+  padding: 10px;
+}
+
+/* Contenedor de detalles del producto */
+.detalles-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  width: 80%;
+  max-width: 600px;
+}
+
+.detalles-contenido {
+  position: relative;
+  text-align: center;
+}
+
+.cerrar-popup {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.detalle-imagen {
+  max-width: 100%;
+  border-radius: 5px;
+}
+
+.solicitar-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.solicitar-btn:hover {
+  background-color: #45a049;
+}
