@@ -84,10 +84,10 @@ export class Inventario{
     }
 
 }
-export class Solicitudes {
+export class Solicitud {
     constructor(){}
 
-    solicitudId: string = ""; // Se guarda un id unico para cada solicitud
+    idSolicitud: string = ""; // Se guarda un id unico para cada solicitud
     motivo: string = ""; //Se guarda una descripcion de lo que se va solicitar, asi como el nombre del solicitante
 
     fechaSolicitud: string = ""; // Se guarda la fecha en la que se realiza la solicitud
@@ -101,15 +101,18 @@ export class Solicitudes {
     idRecursos = []
     cantidadRecursos= []
     profResponsable="";
-    solicitante=""; //quien solicita el recurso
+    nombreSolicitante=""; //quien solicita el recurso
+    carreraSolicitante =""
     observaciones="";
     horarioInicio="";
     horarioFin="";
     diasPrestamo="";
-    fotoSolicitud="";
+    requiereSupervision="";
+    matriculaSolic="";
+  
 
     setData(data:any){
-    this.solicitudId = data.solicitudId;
+    this.idSolicitud = data.solicitudId;
     this.motivo = data.motivo;
     this.fechaSolicitud = data.fechaSolicitud;
     this.fechaSoliNumber = data.fechaSoliNumber;
@@ -119,12 +122,13 @@ export class Solicitudes {
     this.idRecurso = data.idRecurso;
     this.cantidadRecursos = data.cantidadRecursos;
     this.profResponsable = data.profResponsable;
-    this.solicitante = data.solicitante;
+    this.nombreSolicitante = data.solicitante;
     this.observaciones = data.observaciones;
     this.horarioInicio = data.horarioInicio;
     this.horarioFin = data.horarioFin;
     this.diasPrestamo = data.diasPrestamo;
-    this.fotoSolicitud = data.fotoSolicitud;
+    this.matriculaSolic= data.matriculaSolic
+    
     }
 }
 

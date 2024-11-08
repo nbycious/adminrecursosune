@@ -36,6 +36,7 @@ import { FileUploadService } from './Componentes/catalogos/upload.service';
     ContactoComponent,
     PerfilUsuarioComponent,
     DetallerecursoComponent,
+    SolicitudesComponent
    
   ],
   imports: [
