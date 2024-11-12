@@ -6,6 +6,7 @@
 
 <!-- Sección de filtros y agregar --> 
 <div class="container mt-6">
+  
   <div class="row justify-content-center">
     <div class="col-6">
       <div class="filter-container custom-filter-container card p-3 shadow-sm">
@@ -60,7 +61,16 @@
         </div>
       </div>
     </div>
-  
+    <div class="alert alert-info" *ngIf="solicitudActual && usuario.Rol === 'Alumno'">
+      
+      <div *ngIf="solicitudActual.recursos && solicitudActual.recursos.length ">
+        <strong>Recursos seleccionados:</strong>
+        <ul>
+          <li *ngFor="let recurso of solicitudActual.recursos">{{recurso}}</li>
+        </ul>
+        <button class="btn btn-primary" (click)="enviarSolicitud()">Enviar Solicitud</button>
+      </div>
+    </div>
 
 
 
@@ -287,7 +297,8 @@
   <section class="text-gray-600 body-font">
     <div class="container px-5 py-24 mx-auto">
       <div class="flex flex-wrap -m-4">
-        <div *ngFor="let recurso of recursosFiltrados | slice:0:24" class="lg:w-1/4 md:w-1/2 p-4 w-full">
+        <div *ngFor="let recurso of recursosFiltrados | slice:0:24" class="lg:w-1/4 md:w-1/2 p-4 w-full border border-black">
+
           <a [routerLink]="['/Detalle', recurso.recursoId]" class="block relative h-48 rounded overflow-hidden">
             <img [src]="recurso.fotoRecurso" alt="fotoRecurso" class="object-cover object-center"><!--aqui debe de ir la imagen agregada por el input-->
           </a>
@@ -303,7 +314,7 @@
             <div *ngIf="recurso.tipoRecurso !== 'Aula'">
               <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline; margin-right: 3px;">En inventario: {{recurso.cantidadReal}}</h4>
               <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline;">Disponible: {{recurso.cantidadDisp}}</h4>
-                
+              <button class="btn btn-primary" *ngIf="solicitudActual" (click)="agregarRecursoASolicitud(recurso)">Agregar a Solicitud</button> 
             </div>
          
 

@@ -8,13 +8,13 @@ import { MainComponent } from './Componentes/main/main.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
+
 // Componentes
 import { NavbarComponent } from './Componentes/navbar/navbar.component';
 import { CatalogosComponent } from './Componentes/catalogos/catalogos.component';
 import { ContactoComponent } from './Componentes/contacto/contacto.component';
 import { PerfilUsuarioComponent } from './Componentes/perfil-usuario/perfil-usuario.component';
 import { DetallerecursoComponent } from './Componentes/detallerecurso/detallerecurso.component';
-import { SolicitudesComponent } from './Componentes/solicitudes/solicitudes.component';
 
 // Firebase
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
@@ -24,6 +24,8 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
 // Servicios
 import { CatalogosService } from './Componentes/catalogos/catalogos.service';
 import { FileUploadService } from './Componentes/catalogos/upload.service';
+import { SolicitudesComponent } from './Componentes/solicitudes/solicitudes.component';
+
 
 
 @NgModule({
@@ -36,8 +38,8 @@ import { FileUploadService } from './Componentes/catalogos/upload.service';
     ContactoComponent,
     PerfilUsuarioComponent,
     DetallerecursoComponent,
-    SolicitudesComponent
-   
+    SolicitudesComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -51,7 +53,8 @@ import { FileUploadService } from './Componentes/catalogos/upload.service';
   ],
   providers: [
     CatalogosService,
-    FileUploadService
+    FileUploadService,
+    
   ],
   bootstrap: [AppComponent]
 })

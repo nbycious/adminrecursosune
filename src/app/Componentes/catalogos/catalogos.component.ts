@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Usuario, Recurso } from 'src/app/Clases/bd';
+import { Usuario, Recurso, Solicitud} from 'src/app/Clases/bd';
 import { Firestore, collection, collectionData, query, where } from '@angular/fire/firestore';
 import { CatalogosService } from './catalogos.service';
 import Swal from 'sweetalert2';
@@ -21,6 +21,7 @@ export class CatalogosComponent implements OnInit {
 
 
   recursos: Recurso[] = [];
+  solicitudActual: Solicitud | null = null;
   usuario: any = null;
 
   nuevoRecurso = new Recurso();
@@ -69,10 +70,31 @@ export class CatalogosComponent implements OnInit {
     this.recursos = recursos;
     this.aplicarFiltros();
    })
-        
+
+   const solicitudesRef = collection(this.firestore, 'Solicitudes');
+   collectionData(solicitudesRef, { idField: 'id' }).subscribe((solicitudes: any[]) => {
+     if (solicitudes && solicitudes.length > 0) {
+       // Convertir el documento de Firebase a instancia de Solicitud
+       const ultimaSolicitud = solicitudes[solicitudes.length - 1];
+       this.solicitudActual = Object.assign(new Solicitud(), ultimaSolicitud);
+       console.log('Solicitud actual cargada:', this.solicitudActual);
+     }
+   });
 
   }
 
+  enviarSolicitud(){
+    if (this.solicitudActual) {
+      const rutaDoc = doc(this.firestore, "Solicitudes", this.solicitudActual.idSolicitud);
+      updateDoc(rutaDoc, {
+        estado: 'Enviada'
+      }).then(() => {
+        Swal.fire('Solicitud Enviada', 'La solicitud ha sido enviada y no se pueden agregar más recursos', 'success');
+      }).catch((error) => {
+        console.error('Error al enviar la solicitud:', error);
+      });
+    }
+  }
 
   onExcelUpload(event: any) {
     const file = event.target.files[0];
@@ -300,6 +322,72 @@ fotoPreview: string | ArrayBuffer | null = null;
     });
   
   }
+  
+  
+  async agregarRecursoASolicitud(recurso: Recurso) {
+    if (!this.solicitudActual) {
+      Swal.fire({
+        title: 'Error',
+        text: 'No hay una solicitud activa',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: '¿Agregar recurso?',
+      text: `¿Estás seguro de que deseas agregar ${recurso.nombreRecurso} a tu solicitud?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, agregar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        // Inicializar el array de recursos si no existe
+        if (!this.solicitudActual.recursos) {
+          this.solicitudActual.recursos = [];
+        }
+
+        // Verificar si el recurso ya está en la solicitud
+        if (this.solicitudActual.recursos.includes(recurso.nombreRecurso)) {
+          Swal.fire({
+            title: 'Advertencia',
+            text: 'Este recurso ya está en tu solicitud',
+            icon: 'warning',
+            confirmButtonText: 'Ok'
+          });
+          return;
+        }
+
+        // Agregar el recurso al array
+        this.solicitudActual.recursos.push(recurso.nombreRecurso);
+
+        // Actualizar en Firebase usando el servicio
+        const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual.idSolicitud!);
+        await updateDoc(solicitudRef, {
+          recursos: this.solicitudActual.recursos
+        });
+
+        Swal.fire({
+          title: 'Éxito',
+          text: 'Recurso agregado correctamente a la solicitud',
+          icon: 'success',
+          confirmButtonText: 'Ok'
+        });
+      } catch (error) {
+        console.error('Error al actualizar la solicitud:', error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un problema al agregar el recurso',
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        });
+      }
+    }
+  }
 
   desactivarRecurso(recurso: Recurso) {
     const rutaDoc = doc(this.firestore, "Recursos", recurso.recursoId);
@@ -338,6 +426,7 @@ fotoPreview: string | ArrayBuffer | null = null;
       }
     });
   }
+  
 }
 
 

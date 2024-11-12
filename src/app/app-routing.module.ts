@@ -11,6 +11,7 @@ import { DetallerecursoComponent } from './Componentes/detallerecurso/detallerec
 import { SolicitudesComponent } from './Componentes/solicitudes/solicitudes.component';
 
 
+
 const routes: Routes = [
   {path: '', component: LoginComponent},
   {path: "Main", component: MainComponent,canActivate: [AuthGuard], data: { roles: ['Alumno'] } },
@@ -18,8 +19,8 @@ const routes: Routes = [
   {path: "Catalogos", component: CatalogosComponent},
   {path:"Contacto", component: ContactoComponent, canActivate: [AuthGuard], data: { roles: ['Alumno'] }},
   {path: "Perfil", component: PerfilUsuarioComponent},
-  {path: "Detalle", component:DetallerecursoComponent},
-  {path: "Solicitudes", component: SolicitudesComponent}
+  {path: "Solicitudes", component:SolicitudesComponent},
+
  
 ];
 

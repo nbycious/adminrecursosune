@@ -30,20 +30,48 @@ export class SolicitudesComponent implements OnInit {
   }
 
 
-  agregarSolicitud(form: NgForm){
-    if (form.valid){
-    this.nuevaSolicitud.idSolicitud = this.generateRandomString(15);
-    let rutaDoc = doc(this.firestore, "Solicitudes", this.nuevaSolicitud.idSolicitud)
-    setDoc(rutaDoc, JSON.parse(JSON.stringify(this.nuevaSolicitud)))
-    console.log('Formulario válido, agregando solicitud:', this.nuevaSolicitud);
-    form.resetForm()
-    Swal.fire("Solicitud enviada exitosamente");
-    this.listaSolicitudes.push(this.nuevaSolicitud); 
-    let btncerrar = document.getElementById("btnCerrarModalElemento")
-    btncerrar?.click();
+  agregarSolicitud(form: NgForm) {
+    if (form.valid) {
+      this.nuevaSolicitud.estado = 'Pendiente';
+      this.nuevaSolicitud.idSolicitud = this.generateRandomString(15);
+      let rutaDoc = doc(this.firestore, "Solicitudes", this.nuevaSolicitud.idSolicitud);
+      setDoc(rutaDoc, JSON.parse(JSON.stringify(this.nuevaSolicitud)))
+        .then(() => {
+          console.log('Formulario válido, agregando solicitud:', this.nuevaSolicitud);
+
+          // Agregar la nueva solicitud a la lista local
+          this.listaSolicitudes.push(this.nuevaSolicitud);
+
+          // Cerrar el modal
+          let btncerrar = document.getElementById("btnCerrarModalElemento");
+          btncerrar?.click();
+
+          // Mostrar el mensaje de SweetAlert
+          Swal.fire({
+            title: "Ir a catálogo",
+            text: "Serás redirigido al catálogo para agregar tus recursos",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Aceptar",
+            cancelButtonText: "Cancelar"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              this.router.navigate(['/Catalogos']); // Redirige al componente de Catálogos
+            }
+          });
+        })
+        .catch((error) => {
+          console.error('Error al guardar la solicitud:', error);
+        });
+
+      // Resetea el formulario
+      form.resetForm();
     }
-    
   }
+
+
   abrirModalNuevaSolicitud(){
     this.nuevaSolicitud = new Solicitud();
   }
