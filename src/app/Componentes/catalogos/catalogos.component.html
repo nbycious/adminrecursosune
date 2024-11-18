@@ -61,12 +61,12 @@
         </div>
       </div>
     </div>
-    <div class="alert alert-info" *ngIf="solicitudActual && usuario.Rol === 'Alumno'">
+    <div class="alert alert-info" *ngIf="solicitudActual!.recursos!.length > 0 && usuario.Rol == 'Alumno'">
       
-      <div *ngIf="solicitudActual.recursos && solicitudActual.recursos.length ">
+      <div>
         <strong>Recursos seleccionados:</strong>
         <ul>
-          <li *ngFor="let recurso of solicitudActual.recursos">{{recurso}}</li>
+          <li *ngFor="let recurso of solicitudActual!.recursos">{{recurso}}</li> 
         </ul>
         <button class="btn btn-primary" (click)="enviarSolicitud()">Enviar Solicitud</button>
       </div>
@@ -314,7 +314,7 @@
             <div *ngIf="recurso.tipoRecurso !== 'Aula'">
               <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline; margin-right: 3px;">En inventario: {{recurso.cantidadReal}}</h4>
               <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline;">Disponible: {{recurso.cantidadDisp}}</h4>
-              <button class="btn btn-primary" *ngIf="solicitudActual" (click)="agregarRecursoASolicitud(recurso)">Agregar a Solicitud</button> 
+              <button class="btn btn-primary" *ngIf="solicitudActual && usuario.Rol === 'Alumno'" (click)="agregarRecursoASolicitud(recurso)">Agregar a Solicitud</button> 
             </div>
          
 

@@ -10,8 +10,11 @@ import { Router } from '@angular/router';
 export class MainComponent implements OnInit {
 
   credencial = new Usuario();
-  constructor(private router: Router) { 
+  usuario= new Usuario();
+  
+  constructor(private router: Router) {   
     this.credencial = history.state
+    
   }
 
   navegaraCatalogos(){
@@ -21,6 +24,8 @@ export class MainComponent implements OnInit {
     this.router.navigate(['/Contacto'])
   }
   ngOnInit(): void {
+    console.log(this.usuario.Rol);
+
   }
 
 }

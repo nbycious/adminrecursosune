@@ -90,7 +90,7 @@ export class Solicitud {
     constructor(){this.recursos = []; }
 
     idSolicitud: string = ""; // Se guarda un id unico para cada solicitud
-   
+    usuarioId=""; //id del alumno que esta solicitando
 
     fechaSolicitud: string = ""; // Se guarda la fecha en la que se realiza la solicitud
     fechaSoliNumber: number = 0;
@@ -115,7 +115,7 @@ export class Solicitud {
   
 
     setData(data:any){
-    this.idSolicitud = data.solicitudId;
+    this.idSolicitud = data.idSolicitud;
   
     this.fechaSolicitud = data.fechaSolicitud;
     this.fechaSoliNumber = data.fechaSoliNumber;
@@ -133,6 +133,7 @@ export class Solicitud {
     this.matriculaSolic= data.matriculaSolic
     this.materia =  data.materia
     this.recursos = data.recursos
+    this.usuarioId = data.usuarioId;
     
     
     }

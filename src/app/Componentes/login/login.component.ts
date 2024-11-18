@@ -42,9 +42,10 @@ export class LoginComponent implements OnInit {
   
         // Redirigir según el rol del usuario
         if (this.credencial.Rol === 'Administrador') {
-          this.navegacion.navigate(['Catalogos']);
-        } else if (this.credencial.Rol === 'Alumno') {
-          this.navegacion.navigate(['Main']);
+          this.navegacion.navigate(['Solicitudes']);
+        } 
+        else if(this.credencial.Rol === 'Alumno'){
+          this.navegacion.navigate(['Main'])
         }
   
       } else {
