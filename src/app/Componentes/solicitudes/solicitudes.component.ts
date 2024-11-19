@@ -21,16 +21,17 @@ export class SolicitudesComponent implements OnInit {
 
   solisBD = collection(this.firestore, "Solicitudes")
   
-
+  esAdmin: boolean = false;
   //usuario = new Usuario();
 
 
   
   constructor(private firestore: Firestore,
     private router : Router
-  ) { }
-  ngOnInit(): void {
-   
+  ) { // obtiene el usuario completo para poder autocompletar los campos de nombre y matricula del modal de nueva solicitud
+    const usuarioGuardado = localStorage.getItem('usuario');
+    
+   //obtiene el id del usuario para poder mostrar sus solicitudes
     const usuarioId = localStorage.getItem('usuarioId');
 
     collectionData(this.solisBD, { idField: 'id' }).subscribe((data: any) => {
@@ -54,6 +55,22 @@ export class SolicitudesComponent implements OnInit {
         this.router.navigate(['/Login']); // Redirige al login si no hay usuarioId
       });
     }
+
+    if (usuarioGuardado) {
+      // Parsear los datos y asignarlos al objeto usuario
+      this.usuario.setData(JSON.parse(usuarioGuardado));
+  
+      // Autocompletar los campos del formulario con los datos del usuario
+      this.nuevaSolicitud.nombreSolicitante = this.usuario.Nombre;
+      this.nuevaSolicitud.matriculaSolic = this.usuario.Matricula;
+      console.log(this.nuevaSolicitud.matriculaSolic)
+      console.log(this.nuevaSolicitud.nombreSolicitante)
+    } else {
+      Swal.fire("Error", "No se encontró información del usuario autenticado", "error");
+    }
+}
+  ngOnInit(): void {
+  
   }
 
  async  agregarSolicitud(form: NgForm) {
@@ -66,7 +83,9 @@ export class SolicitudesComponent implements OnInit {
       if(usuarioId!== null){
 
         
-       
+        this.nuevaSolicitud.nombreSolicitante = this.usuario.Nombre;
+        this.nuevaSolicitud.matriculaSolic = this.usuario.Matricula;
+        this.nuevaSolicitud.carreraSolicitante = this.usuario.Carrera;
 
         this.nuevaSolicitud.usuarioId = usuarioId;
         this.nuevaSolicitud.estado = 'Pendiente agregar recursos';
@@ -124,11 +143,15 @@ export class SolicitudesComponent implements OnInit {
 
 
    async abrirModalNuevaSolicitud(){
+
+    
+   
     const usuarioId = localStorage.getItem('usuarioId');
     const existingSolicitudRef = query(
       collection(this.firestore, 'Solicitudes'),
       where('usuarioId', '==', usuarioId),
       where('estado', 'in', ['Pendiente agregar recursos', 'Enviada', 'Aprobada'])
+      
     );
    
     const existingSolicitudSnapshot = await getDocs(existingSolicitudRef);
@@ -150,6 +173,11 @@ export class SolicitudesComponent implements OnInit {
     }
     else{
       this.nuevaSolicitud = new Solicitud();
+      this.nuevaSolicitud.nombreSolicitante = this.usuario.Nombre;
+      this.nuevaSolicitud.matriculaSolic = this.usuario.Matricula;
+      this.nuevaSolicitud.carreraSolicitante = this.usuario.Carrera;
+
+  
       
     }
 
