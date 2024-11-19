@@ -33,15 +33,19 @@ export class LoginComponent implements OnInit {
   
         // Llenar variable con la información del usuario
         this.credencial.setData(usuarioSnap[0]);
+
+        // Guardar el ID del usuario en localStorage
+        localStorage.setItem('usuarioId', this.credencial.UsuarioId);
   
         // Guardar el usuario en localStorage
         localStorage.setItem('usuario', JSON.stringify(this.credencial));
   
         // Redirigir según el rol del usuario
         if (this.credencial.Rol === 'Administrador') {
-          this.navegacion.navigate(['Catalogos']);
-        } else if (this.credencial.Rol === 'Alumno') {
-          this.navegacion.navigate(['Main']);
+          this.navegacion.navigate(['Solicitudes']);
+        } 
+        else if(this.credencial.Rol === 'Alumno'){
+          this.navegacion.navigate(['Main'])
         }
   
       } else {

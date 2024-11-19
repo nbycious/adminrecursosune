@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Firestore, collectionData, collection, doc, docData } from '@angular/fire/firestore';
+import { Firestore, collectionData, collection, doc, updateDoc, docData } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Recurso } from "src/app/Clases/bd";
 
@@ -19,4 +19,17 @@ import { Recurso } from "src/app/Clases/bd";
         const recursoDoc = doc(this.firestore, `Recursos/${id}`);//$ (el pejecoin) construye una cadena de texto que representa la ruta del documento en firestore.
         return docData(recursoDoc, { idField: 'recursoId' }) as Observable<Recurso>;
       }
+      // Actualizar la cantidad disponible de un recurso
+  actualizarCantidadDisponible(recursoId: string, nuevaCantidad: number): Promise<void> {
+    const recursoDoc = doc(this.firestore, `Recursos/${recursoId}`);
+    return updateDoc(recursoDoc, { cantidadDisp: nuevaCantidad });
   }
+
+  // Restaurar la cantidad disponible de un recurso
+  restaurarCantidad(recursoId: string, cantidadReal: number): Promise<void> {
+    const recursoDoc = doc(this.firestore, `Recursos/${recursoId}`);
+    return updateDoc(recursoDoc, { cantidadDisp: cantidadReal });
+  }
+}
+  
+  

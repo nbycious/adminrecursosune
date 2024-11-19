@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-sm-6">
             <div class="filter-container custom-filter-container card p-3 shadow-sm"  data-bs-toggle="modal" data-bs-target="#modalSolicitud" (click)="abrirModalNuevaSolicitud()" >
-                <button type="button" class="btn btn-outline-success">Nueva solicitud</button>
+                <button  type="button" class="btn btn-outline-success">Nueva solicitud</button>
                 
             </div>
             <div class="col-6" style="margin-bottom: 60px;">
@@ -27,7 +27,7 @@
       <table class="table table-bordered text-center">
         <thead class="table-light">
             <tr>
-                <th scope="col">Fecha Solicitud</th>
+               
                 <th scope="col">Fecha de Préstamo</th>
                 <th scope="col">Fecha de Devolución</th>
                 <th scope="col">Recursos Solicitados</th>
@@ -37,10 +37,11 @@
         </thead>
         <tbody>
             <tr *ngFor="let solicitud of listaSolicitudes">
-                <td>{{ solicitud.fechaSolicitud }}</td>
-                <td>{{ solicitud.fechaUso }}</td>
+               
+                <td>{{ solicitud.fechaInicio }}</td>
                 <td>{{ solicitud.fechaFin }}</td>
                 <td>{{ solicitud.recursos }}</td>
+                <td>{{solicitud.estado}}</td>
                 
             </tr>
         </tbody>
@@ -52,109 +53,71 @@
 
 
 
-<!--modales-->
-<!--modal nueva solicitud-->
+<!-- Modal -->
 <div class="modal fade" id="modalSolicitud" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title fs-5 text-center" id="exampleModalLabel">Nueva solicitud</h3>
-        <button type="button" id="btnCerrarModalElemento" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <button type="button" id="btnCerrarModalSolicitud" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-       
         <form #solicitudForm="ngForm">
-
           <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="nombreSolicitante">Nombre del solicitante:</label>
-                <input type="text" id="nombreSolicitante" class="form-control"  [(ngModel)]="nuevaSolicitud.nombreSolicitante" name="nombreSolicitante" required>
-                
-              </div>
-              <div class="col-md-6">
-                <label for="nombreRecurso">Matrícula:</label>
-                <input type="text" id="nombreSolicitante" class="form-control" [(ngModel)]="nuevaSolicitud.matriculaSolic" name="matriculaSolic">
-                
-              </div>
+            <div class="col-md-6">
+              <label for="nombreSolicitante">Nombre del solicitante:</label>
+              <input type="text" id="nombreSolicitante" class="form-control" [(ngModel)]="nuevaSolicitud.nombreSolicitante" name="nombreSolicitante" required>
+            </div>
+            <div class="col-md-6">
+              <label for="matriculaSolic">Matrícula:</label>
+              <input type="text" id="matriculaSolic" class="form-control" [(ngModel)]="nuevaSolicitud.matriculaSolic" name="matriculaSolic" required>
+            </div>
           </div>
-            
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="carrera">Carrera:</label>
-                <select id="carrera" class="form-control" name="carreraSolicitante" required [(ngModel)]="nuevaSolicitud.carreraSolicitante">
-                  <option value="" disabled selected>Selecciona tu carrera</option>
-                  <option value ="IIS" >IIS</option>
-                  <option value ="ISCE" >ISCE</option>
-                  <option value ="IP">IP</option>
-                  <option value ="IA" >IA</option>
-                </select>
-              </div>
-                <div class="col-md-6">
-                  <label for="fechaSoli">Fecha de solicitud: </label>
-                  <br>
-                    <input id="fechaSoli" type="date" style="width: 280px; " name="fechaSolicitud"[(ngModel)]="nuevaSolicitud.fechaSolicitud" >
-                </div>
-               
+          
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="carrera">Carrera:</label>
+              <select id="carrera" class="form-control" name="carreraSolicitante" required [(ngModel)]="nuevaSolicitud.carreraSolicitante">
+                <option value="" disabled selected>Selecciona tu carrera</option>
+                <option value="IIS">IIS</option>
+                <option value="ISCE">ISCE</option>
+              
+              </select>
             </div>
-
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="fechaInicio">Fecha de inicio de préstamo:</label>
-                <br>
-                <input id="fechaInicio" type="date" style="width: 280px;" name ="ferchaUso" required [(ngModel)]="nuevaSolicitud.fechaUso">
-              </div>
-              <div class="col-md-6">
-                <label for="horaInicio">Horario de inicio:</label>
-                <br>
-                <input type="time" id="horaInicio"  min="08:00" max="19:00" style="width: 280px;" name="horaInicio" [(ngModel)]="nuevaSolicitud.horarioInicio"/>
-              </div>
+            <div class="col-md-6">
+              <label for="materia">Materia: </label>
+              <input id="materia" type="text" class="form-control" name="materia" [(ngModel)]="nuevaSolicitud.materia" required>
             </div>
-
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label for="fechaFin">Fecha de fin de préstamo:</label>
-                <br>
-                <input id="fechaFin" type="date" style="width: 280px;"[(ngModel)]="nuevaSolicitud.fechaFin" name="fechaFin">
-              </div>
-              <div class="col-md-6">
-                <label for="horaFin">Horario de fin:</label>
-                <br>
-                <input type="time" id="horaFin"  min="08:00" max="19:00" style="width: 280px;" [(ngModel)]="nuevaSolicitud.horarioFin" name="horarioFin"/>
-              </div>
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="fechaInicio">Fecha de inicio de préstamo:</label>
+              <input id="fechaInicio" style="width: 365px;" type="date" name="fechaUso" required [(ngModel)]="nuevaSolicitud.fechaInicio">
             </div>
-
-            <div class="row mb-3">
-              <div class="col-md-6">
-               <label for="supervision">¿Requieres supervisión de un profesor?</label>
-               <select id="supervision" class="form-control"  [(ngModel)]="nuevaSolicitud.requiereSupervision" name="requiereSupervision">
-                <option value="Si">Si</option>
-                <option value="No">No</option> 
-               </select>
-              </div>
-              <div class="col-md-6">
-                <label for="comentarios">Comentarios/Observaciones:</label>
-                <br>
-                <textarea id="comentarios" [(ngModel)]="nuevaSolicitud.observaciones" style="width: 280px;" name="observaciones"></textarea>
-              </div>
+            <div class="col-md-6">
+              <label for="fechaFin">Fecha de fin de préstamo:</label>
+              <input id="fechaFin" style="width: 365px;" type="date" [(ngModel)]="nuevaSolicitud.fechaFin" name="fechaFin" required>
             </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" (click)="agregarSolicitud(solicitudForm)" >Enviar solicitud</button> 
+          </div>
+          
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="horarioPrestamo">Horario de préstamo</label>
+              <input id="horarioPrestamo" style="width: 365px;" type="time" class="form-select" min="08:00" max="18:00" name="horarioPrestamo" [(ngModel)]="nuevaSolicitud.horarioInicio" required>
+            </div>
+            <div class="col-md-6">
+              <label for="comentarios">Motivo del préstamo:</label>
+              <textarea id="comentarios" [(ngModel)]="nuevaSolicitud.motivo" style="width: 365px;" name="motivo" required></textarea>
+            </div>
+          </div>
+          
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success" [disabled]="!solicitudForm.form.valid" (click)="agregarSolicitud( solicitudForm)">Agregar recursos</button>
+          </div>
+        </form>
       </div>
-      </form>
-      </div>
+    </div>
   </div>
+</div>
 
-
-
-
-
-
-
-
-
-     
-
-        
-
-   

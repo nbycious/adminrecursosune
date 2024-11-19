@@ -9,6 +9,7 @@ export class Usuario{
     Contrasena: string =""; // Se guarda la contraseña del Usuario
     Carrera: string ="";//carrera del alumno
     Periodo: string="";//semestre o cuatrimestre que cursa el alumno
+    Matricula="";
 
 
     setData(data:any){
@@ -19,6 +20,7 @@ export class Usuario{
         this.Contrasena = data.Contrasena;
         this.Carrera = data.Carrera
         this.Periodo = data.Periodo;
+        this.Matricula = data.Matricula;
     }
 }
 
@@ -33,8 +35,8 @@ export class Recurso{
     Estado : string = ""; // Se guarda el estado del recurso que quiera utilizar Ej: Activo, Inactivo
     Ubicacion: string="";//El lugar fisico donde se encuenta el recurso o si es insumo en almacen
     Costo=""; //lo que le costo del producto a la institucion, en caso de que exista un daño saber cuanto cobrar
-    cantidadReal=""; //cantidad que hay en el inventario realmente
-    cantidadDisp=""; //la cantidad que hay disponible (puede disminuir cuando se solicita)
+    cantidadReal=0; //cantidad que hay en el inventario realmente
+    cantidadDisp=0; //la cantidad que hay disponible (puede disminuir cuando se solicita)
     //unidadMedida="";//por ejemplo si es un cable metros etc
     horarioDisp="";//horario ene l que esta disponible el recurso
     claveAdmin = "" //clave que el administrador asigna al recurso
@@ -85,49 +87,54 @@ export class Inventario{
 
 }
 export class Solicitud {
-    constructor(){}
+    constructor(){this.recursos = []; }
 
     idSolicitud: string = ""; // Se guarda un id unico para cada solicitud
-    motivo: string = ""; //Se guarda una descripcion de lo que se va solicitar, asi como el nombre del solicitante
+    usuarioId=""; //id del alumno que esta solicitando
 
     fechaSolicitud: string = ""; // Se guarda la fecha en la que se realiza la solicitud
     fechaSoliNumber: number = 0;
 
-    fechaUso: string = ""; // Se guarda la fecha para el uso de los recursos a utilizar
+    fechaInicio: string = ""; // Se guarda la fecha para el uso de los recursos a utilizar
     fechaFin: string = ""; // Se guarda la fecha de fin para el uso de los recursos utilizados 
-    estadoSolicitud: string = ""; // Se guarda el estado de la solicitud Ej: Pendiente, Aprobada, Rechazada
-    idRecurso=""
-    recursos = []
+    estado: string = ""; // Se guarda el estado de la solicitud Ej: Pendiente, Aprobada, Rechazada
+    idRecurso="";
+    recursos : string []
     idRecursos = []
     cantidadRecursos= []
     profResponsable="";
     nombreSolicitante=""; //quien solicita el recurso
     carreraSolicitante =""
-    observaciones="";
+    motivo="";
     horarioInicio="";
     horarioFin="";
     diasPrestamo="";
     requiereSupervision="";
     matriculaSolic="";
+    materia="";
   
 
     setData(data:any){
-    this.idSolicitud = data.solicitudId;
-    this.motivo = data.motivo;
+    this.idSolicitud = data.idSolicitud;
+  
     this.fechaSolicitud = data.fechaSolicitud;
     this.fechaSoliNumber = data.fechaSoliNumber;
-    this.fechaUso = data.fechaUso;
+    this.fechaInicio = data.fechaUso;
     this.fechaFin = data.fechaFin;
-    this.estadoSolicitud = data.estadoSolicitud;
+    this.estado = data.estadoSolicitud;
     this.idRecurso = data.idRecurso;
     this.cantidadRecursos = data.cantidadRecursos;
     this.profResponsable = data.profResponsable;
     this.nombreSolicitante = data.solicitante;
-    this.observaciones = data.observaciones;
+    this.motivo = data.motivo;
     this.horarioInicio = data.horarioInicio;
     this.horarioFin = data.horarioFin;
     this.diasPrestamo = data.diasPrestamo;
     this.matriculaSolic= data.matriculaSolic
+    this.materia =  data.materia
+    this.recursos = data.recursos
+    this.usuarioId = data.usuarioId;
+    
     
     }
 }

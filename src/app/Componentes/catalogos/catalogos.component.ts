@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Usuario, Recurso } from 'src/app/Clases/bd';
+import { Usuario, Recurso, Solicitud} from 'src/app/Clases/bd';
 import { Firestore, collection, collectionData, query, where } from '@angular/fire/firestore';
 import { CatalogosService } from './catalogos.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
-import { deleteDoc, doc, setDoc, updateDoc } from 'firebase/firestore';
+import { deleteDoc, doc, limit, setDoc, updateDoc } from 'firebase/firestore';
 import { FileUploadService } from './upload.service';
 import readXlsxFile from 'read-excel-file'
 import { NgForm } from '@angular/forms';
@@ -20,7 +20,8 @@ import { NgForm } from '@angular/forms';
 export class CatalogosComponent implements OnInit {
 
 
-  recursos: Recurso[] = [];
+  recursos: any[] = [];
+  solicitudActual= new Solicitud();
   usuario: any = null;
 
   nuevoRecurso = new Recurso();
@@ -65,14 +66,79 @@ export class CatalogosComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.usuario.Rol)
    this.catalogoServ.getRecursos().subscribe(recursos => {
+    
     this.recursos = recursos;
+    
+    
     this.aplicarFiltros();
    })
-        
+
+   const solicitudesRef = collection(this.firestore, 'Solicitudes');
+   let q = query(solicitudesRef, where( "estado", "==", "Pendiente agregar recursos"), limit(1))
+   collectionData(q).subscribe((solicitudes: any[]) => {
+     if (solicitudes.length > 0) {
+       // Convertir el documento de Firebase a instancia de Solicitud
+       let solicitud = new Solicitud();
+       solicitud.setData(solicitudes[0])
+       this.solicitudActual = solicitud; 
+       console.log('Solicitud actual cargada:', this.solicitudActual);
+     }
+   });
 
   }
 
+  async enviarSolicitud() {
+    if (!this.solicitudActual || this.solicitudActual.recursos.length === 0) {
+      Swal.fire({
+        title: 'Error',
+        text: 'No hay recursos en la solicitud o no hay una solicitud activa',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+  
+    try {
+      // Obtener el ID del usuario del localStorage
+      const usuarioId = localStorage.getItem('usuarioId');
+  
+      if (usuarioId !== null) {
+        // Actualizar el estado de la solicitud
+        const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual.idSolicitud);
+        await updateDoc(solicitudRef, { estado: 'Enviada', usuarioId: usuarioId });
+  
+        // Limpiar la variable solicitudActual, creo q el problema esta aquí lol
+        this.solicitudActual = new Solicitud();
+  
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          title: 'Solicitud enviada',
+          text: 'Tu solicitud ha sido enviada exitosamente.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
+        this.router.navigate(['/Main']);
+      } else {
+        // Mostrar un mensaje de error si no se encuentra el ID del usuario en el localStorage
+        Swal.fire({
+          title: 'Error',
+          text: 'No se pudo obtener el ID del usuario',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    } catch (error) {
+      console.error('Error al enviar la solicitud:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Hubo un problema al enviar la solicitud.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+    }
+  }
 
   onExcelUpload(event: any) {
     const file = event.target.files[0];
@@ -82,12 +148,12 @@ export class CatalogosComponent implements OnInit {
           const recurso = new Recurso();
           recurso.fotoRecurso = row[1];
           recurso.nombreRecurso = row[2];       
-          recurso.tipoRecurso = row[4]; 
-          recurso.Estado = row[5]; 
-          recurso.Categoria = row[6];
-          recurso.Ubicacion = row[7];
-          recurso.cantidadReal = row[10];
-          
+          recurso.tipoRecurso = row[3]; 
+          recurso.Estado = row[4]; 
+          recurso.Categoria = row[5];
+          recurso.Ubicacion = row[6];
+          recurso.cantidadReal = row[7];
+          recurso.cantidadDisp = row[8];
 
           // Guarda el recurso en Firestore
           this.agregarRecursoDesdeExcel(recurso);
@@ -114,10 +180,11 @@ export class CatalogosComponent implements OnInit {
     this.recursosFiltrados = this.recursos.filter(recurso => {
       // Filtro por término de búsqueda
       
-      console.log("RecursoNombre",recurso.nombreRecurso);
+      
       
       const cumpleBusqueda = !this.searchTerm || 
         recurso.nombreRecurso.toLowerCase().includes(this.searchTerm.toLowerCase())
+        console.log(recurso.nombreRecurso)
       
       // Filtro por tipo
       const cumpleTipo = !this.tipoSeleccionado ||
@@ -300,6 +367,91 @@ fotoPreview: string | ArrayBuffer | null = null;
     });
   
   }
+  
+  
+  async agregarRecursoASolicitud(recurso: Recurso) {
+    console.log(this.solicitudActual)
+    if (this.solicitudActual?.idSolicitud == "") {
+      Swal.fire({
+        title: 'Error',
+        text: 'No hay una solicitud activa',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      });
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: '¿Agregar recurso?',
+      text: `¿Estás seguro de que deseas agregar ${recurso.nombreRecurso} a tu solicitud?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, agregar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        // Inicializar el array de recursos si no existe
+        if (!this.solicitudActual!.recursos) {
+          this.solicitudActual!.recursos = new Array();
+        }
+
+        // Verificar si el recurso ya está en la solicitud
+        if (this.solicitudActual!.recursos.includes(recurso.nombreRecurso)) {
+          Swal.fire({
+            title: 'Advertencia',
+            text: 'Este recurso ya está en tu solicitud',
+            icon: 'warning',
+            confirmButtonText: 'Ok'
+          });
+          return;
+        }
+
+        if(recurso.cantidadDisp > 0){
+           this.solicitudActual!.recursos.push(recurso.nombreRecurso);
+        // Actualizar la cantidad disponible
+          const nuevaCantidad = recurso.cantidadDisp - 1;
+          this.catalogoServ.actualizarCantidadDisponible(recurso.recursoId, nuevaCantidad).then(() => {
+
+            recurso.cantidadDisp = nuevaCantidad;
+
+            console.log(`Recurso ${recurso.nombreRecurso} actualizado.`);
+          });
+            // Actualizar en Firebase usando el servicio
+        const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual!.idSolicitud!);
+        await updateDoc(solicitudRef, {
+          recursos: this.solicitudActual!.recursos
+        });
+
+        Swal.fire({
+          title: 'Éxito',
+          text: 'Recurso agregado correctamente a la solicitud',
+          icon: 'success',
+          confirmButtonText: 'Ok'
+        });
+        } 
+        else {
+        alert('Este recurso no está disponible.');
+        }
+       
+    }
+        
+    
+      
+        
+       catch (error) {
+        console.error('Error al actualizar la solicitud:', error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un problema al agregar el recurso',
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        });
+      }
+    }
+  }
+
 
   desactivarRecurso(recurso: Recurso) {
     const rutaDoc = doc(this.firestore, "Recursos", recurso.recursoId);
@@ -338,6 +490,7 @@ fotoPreview: string | ArrayBuffer | null = null;
       }
     });
   }
+  
 }
 
 
