@@ -136,7 +136,7 @@ export class SolicitudesComponent implements OnInit {
       // El usuario ya tiene una solicitud activa, mostrar un mensaje de error
       Swal.fire({
         title: 'Recuerda',
-        text: 'Ya tienes una solicitud activa. No puedes crear una nueva hasta que sea finalizada por el administrador.',
+        text: 'Ya tienes una solicitud activa. No puedes crear una nueva hasta que el préstamo finalice.',
         icon: 'warning',
         confirmButtonText: 'OK',
         allowOutsideClick: false

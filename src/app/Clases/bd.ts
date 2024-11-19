@@ -35,8 +35,8 @@ export class Recurso{
     Estado : string = ""; // Se guarda el estado del recurso que quiera utilizar Ej: Activo, Inactivo
     Ubicacion: string="";//El lugar fisico donde se encuenta el recurso o si es insumo en almacen
     Costo=""; //lo que le costo del producto a la institucion, en caso de que exista un daño saber cuanto cobrar
-    cantidadReal=""; //cantidad que hay en el inventario realmente
-    cantidadDisp=""; //la cantidad que hay disponible (puede disminuir cuando se solicita)
+    cantidadReal=0; //cantidad que hay en el inventario realmente
+    cantidadDisp=0; //la cantidad que hay disponible (puede disminuir cuando se solicita)
     //unidadMedida="";//por ejemplo si es un cable metros etc
     horarioDisp="";//horario ene l que esta disponible el recurso
     claveAdmin = "" //clave que el administrador asigna al recurso

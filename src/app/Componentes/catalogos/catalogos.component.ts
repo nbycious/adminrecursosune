@@ -68,7 +68,10 @@ export class CatalogosComponent implements OnInit {
   ngOnInit() {
     console.log(this.usuario.Rol)
    this.catalogoServ.getRecursos().subscribe(recursos => {
+    
     this.recursos = recursos;
+    
+    
     this.aplicarFiltros();
    })
 
@@ -116,7 +119,7 @@ export class CatalogosComponent implements OnInit {
           icon: 'success',
           confirmButtonText: 'OK'
         });
-        this.router.navigate(['/inicio']);
+        this.router.navigate(['/Main']);
       } else {
         // Mostrar un mensaje de error si no se encuentra el ID del usuario en el localStorage
         Swal.fire({
@@ -145,12 +148,12 @@ export class CatalogosComponent implements OnInit {
           const recurso = new Recurso();
           recurso.fotoRecurso = row[1];
           recurso.nombreRecurso = row[2];       
-          recurso.tipoRecurso = row[4]; 
-          recurso.Estado = row[5]; 
-          recurso.Categoria = row[6];
-          recurso.Ubicacion = row[7];
-          recurso.cantidadReal = row[10];
-          
+          recurso.tipoRecurso = row[3]; 
+          recurso.Estado = row[4]; 
+          recurso.Categoria = row[5];
+          recurso.Ubicacion = row[6];
+          recurso.cantidadReal = row[7];
+          recurso.cantidadDisp = row[8];
 
           // Guarda el recurso en Firestore
           this.agregarRecursoDesdeExcel(recurso);
@@ -177,10 +180,11 @@ export class CatalogosComponent implements OnInit {
     this.recursosFiltrados = this.recursos.filter(recurso => {
       // Filtro por término de búsqueda
       
-      console.log("RecursoNombre",recurso.nombreRecurso);
+      
       
       const cumpleBusqueda = !this.searchTerm || 
         recurso.nombreRecurso.toLowerCase().includes(this.searchTerm.toLowerCase())
+        console.log(recurso.nombreRecurso)
       
       // Filtro por tipo
       const cumpleTipo = !this.tipoSeleccionado ||
@@ -404,10 +408,17 @@ fotoPreview: string | ArrayBuffer | null = null;
           return;
         }
 
-        // Agregar el recurso al array
-        this.solicitudActual!.recursos.push(recurso.nombreRecurso);
+        if(recurso.cantidadDisp > 0){
+           this.solicitudActual!.recursos.push(recurso.nombreRecurso);
+        // Actualizar la cantidad disponible
+          const nuevaCantidad = recurso.cantidadDisp - 1;
+          this.catalogoServ.actualizarCantidadDisponible(recurso.recursoId, nuevaCantidad).then(() => {
 
-        // Actualizar en Firebase usando el servicio
+            recurso.cantidadDisp = nuevaCantidad;
+
+            console.log(`Recurso ${recurso.nombreRecurso} actualizado.`);
+          });
+            // Actualizar en Firebase usando el servicio
         const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual!.idSolicitud!);
         await updateDoc(solicitudRef, {
           recursos: this.solicitudActual!.recursos
@@ -419,7 +430,17 @@ fotoPreview: string | ArrayBuffer | null = null;
           icon: 'success',
           confirmButtonText: 'Ok'
         });
-      } catch (error) {
+        } 
+        else {
+        alert('Este recurso no está disponible.');
+        }
+       
+    }
+        
+    
+      
+        
+       catch (error) {
         console.error('Error al actualizar la solicitud:', error);
         Swal.fire({
           title: 'Error',
@@ -430,6 +451,7 @@ fotoPreview: string | ArrayBuffer | null = null;
       }
     }
   }
+
 
   desactivarRecurso(recurso: Recurso) {
     const rutaDoc = doc(this.firestore, "Recursos", recurso.recursoId);
