@@ -20,8 +20,8 @@ export class SolicitudesComponent implements OnInit {
   usuario = new Usuario();
 
   solisBD = collection(this.firestore, "Solicitudes")
-  
-  esAdmin: boolean = false;
+  esAdmin = false;
+  estadosSolicitud = ['Pendiente', 'Aprobada, en curso', 'Rechazada', 'Finalizada'];
   //usuario = new Usuario();
 
 
@@ -34,17 +34,29 @@ export class SolicitudesComponent implements OnInit {
    //obtiene el id del usuario para poder mostrar sus solicitudes
     const usuarioId = localStorage.getItem('usuarioId');
 
-    collectionData(this.solisBD, { idField: 'id' }).subscribe((data: any) => {
-      this.listaSolicitudes = data;
-    });
-    if (usuarioId) {
-      // Filtrar las solicitudes para el usuario autenticado
-      const userSolicitudQuery = query(this.solisBD, where('usuarioId', '==', usuarioId));
+    if(usuarioGuardado){
+      this.usuario.setData(JSON.parse(usuarioGuardado));
+      this.esAdmin = this.usuario.Rol === 'Administrador'; // Verifica si el usuario es administrador
+      this.nuevaSolicitud.nombreSolicitante = this.usuario.Nombre;
+      this.nuevaSolicitud.matriculaSolic = this.usuario.Matricula;
 
-      collectionData(userSolicitudQuery, { idField: 'id' }).subscribe((data: any) => {
-        this.listaSolicitudes = data;
-      });
-    } else {
+         // Si es admin, obtén todas las solicitudes
+         if (this.esAdmin) {
+          collectionData(this.solisBD, { idField: 'id' }).subscribe((data: any) => {
+            this.listaSolicitudes = data;
+          });
+        } else if (usuarioId) {
+          // Si es usuario normal, solo obtén sus solicitudes
+          const userSolicitudQuery = query(this.solisBD, where('usuarioId', '==', usuarioId));
+          collectionData(userSolicitudQuery, { idField: 'id' }).subscribe((data: any) => {
+            this.listaSolicitudes = data;
+          });
+        }
+    }
+
+
+  
+     else {
       // Si no se encuentra el ID del usuario, mostrar un mensaje de error o redirigir al inicio de sesión
       Swal.fire({
         title: 'Error',
@@ -141,6 +153,31 @@ export class SolicitudesComponent implements OnInit {
   
   
 
+  // Método para que el admin actualice el estado de una solicitud
+  async actualizarEstadoSolicitud(solicitud: Solicitud, nuevoEstado: string) {
+    try {
+      const solicitudRef = doc(this.firestore, "Solicitudes", solicitud.idSolicitud);
+      await updateDoc(solicitudRef, {
+        estado: nuevoEstado
+      });
+
+      Swal.fire({
+        title: 'Éxito',
+        text: `Estado de la solicitud actualizado a: ${nuevoEstado}`,
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
+
+    } catch (error) {
+      console.error('Error al actualizar el estado:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudo actualizar el estado de la solicitud',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+    }
+  }
 
    async abrirModalNuevaSolicitud(){
 

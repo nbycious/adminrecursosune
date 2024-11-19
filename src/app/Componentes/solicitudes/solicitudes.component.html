@@ -29,8 +29,8 @@
         <thead class="table-light">
             <tr>
                
-                <th  *ngIf="usuario.Rol =='Administrador'" scope="col">Matrícula Solicitante</th> 
-                <th  *ngIf="usuario.Rol =='Administrador'" scope="col">Nombre Solicitante</th>                
+                <th  *ngIf="usuario.Rol =='Administrador'" scope="col">Matrícula</th> 
+                <th  *ngIf="usuario.Rol =='Administrador'" scope="col">Nombre</th>                
                 <th scope="col">Fecha de Préstamo</th>
                 <th scope="col">Fecha de Devolución</th>
                 <th scope="col">Recursos Solicitados</th>
@@ -45,8 +45,18 @@
                 <td>{{ solicitud.fechaInicio }}</td>
                 <td>{{ solicitud.fechaFin }}</td>
                 <td>{{ solicitud.recursos }}</td>
-                <td>{{solicitud.estado}}</td>
-                
+               
+                <td *ngIf="!esAdmin">{{solicitud.estado}}</td>
+                <select *ngIf="esAdmin" 
+                        class="form-select form-select-sm" 
+                        [(ngModel)]="solicitud.estado"
+                        (change)="actualizarEstadoSolicitud(solicitud, solicitud.estado)">
+                  <option *ngFor="let estado of estadosSolicitud" [value]="estado">
+                    {{estado}}
+                  </option>
+                </select>
+             
+            
             </tr>
         </tbody>
       </table>
