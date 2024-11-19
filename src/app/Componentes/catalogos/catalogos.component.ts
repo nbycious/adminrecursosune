@@ -368,90 +368,110 @@ fotoPreview: string | ArrayBuffer | null = null;
   
   }
   
-  
   async agregarRecursoASolicitud(recurso: Recurso) {
-    console.log(this.solicitudActual)
-    if (this.solicitudActual?.idSolicitud == "") {
+    console.log(this.solicitudActual);
+  
+    if (this.solicitudActual?.idSolicitud === "") {
       Swal.fire({
         title: 'Error',
         text: 'No hay una solicitud activa',
         icon: 'error',
-        confirmButtonText: 'Ok'
+        confirmButtonText: 'Ok',
       });
       return;
     }
-
+  
     const result = await Swal.fire({
       title: '¿Agregar recurso?',
-      text: `¿Estás seguro de que deseas agregar ${recurso.nombreRecurso} a tu solicitud?`,
+      text: `Selecciona la cantidad de "${recurso.nombreRecurso}" a agregar (disponible: ${recurso.cantidadDisp})`,
       icon: 'question',
+      input: 'number',
+      inputAttributes: {
+        min: '1',
+        max: recurso.cantidadDisp.toString(),
+        step: '1',
+      },
+      inputLabel: 'Cantidad',
       showCancelButton: true,
       confirmButtonText: 'Sí, agregar',
-      cancelButtonText: 'Cancelar'
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value || parseInt(value) <= 0 || parseInt(value) > recurso.cantidadDisp) {
+          return `Introduce una cantidad válida entre 1 y ${recurso.cantidadDisp}`;
+        }
+        return null;
+      },
     });
-
+  
     if (result.isConfirmed) {
+      const cantidad = parseInt(result.value || "0");
+  
       try {
+        // Asignar la cantidad seleccionada
+        recurso.cantidadSeleccionada = cantidad;
+  
         // Inicializar el array de recursos si no existe
         if (!this.solicitudActual!.recursos) {
-          this.solicitudActual!.recursos = new Array();
+          this.solicitudActual!.recursos = [];
         }
-
+  
         // Verificar si el recurso ya está en la solicitud
         if (this.solicitudActual!.recursos.includes(recurso.nombreRecurso)) {
           Swal.fire({
             title: 'Advertencia',
             text: 'Este recurso ya está en tu solicitud',
             icon: 'warning',
-            confirmButtonText: 'Ok'
+            confirmButtonText: 'Ok',
           });
           return;
         }
-
-        if(recurso.cantidadDisp > 0){
-           this.solicitudActual!.recursos.push(recurso.nombreRecurso);
-        // Actualizar la cantidad disponible
-          const nuevaCantidad = recurso.cantidadDisp - 1;
-          this.catalogoServ.actualizarCantidadDisponible(recurso.recursoId, nuevaCantidad).then(() => {
-
-            recurso.cantidadDisp = nuevaCantidad;
-
-            console.log(`Recurso ${recurso.nombreRecurso} actualizado.`);
+  
+        if (recurso.cantidadDisp > 0) {
+          this.solicitudActual!.recursos.push(recurso.nombreRecurso);
+  
+          // Actualizar la cantidad disponible
+          const nuevaCantidad = recurso.cantidadDisp - cantidad;
+  
+          await this.catalogoServ.actualizarCantidadDisponible(recurso.recursoId, nuevaCantidad);
+  
+          recurso.cantidadDisp = nuevaCantidad;
+  
+          console.log(`Recurso ${recurso.nombreRecurso} actualizado.`);
+  
+          // Actualizar en Firebase usando el servicio
+          const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual!.idSolicitud!);
+          await updateDoc(solicitudRef, {
+            recursos: this.solicitudActual!.recursos,
           });
-            // Actualizar en Firebase usando el servicio
-        const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual!.idSolicitud!);
-        await updateDoc(solicitudRef, {
-          recursos: this.solicitudActual!.recursos
-        });
-
-        Swal.fire({
-          title: 'Éxito',
-          text: 'Recurso agregado correctamente a la solicitud',
-          icon: 'success',
-          confirmButtonText: 'Ok'
-        });
-        } 
-        else {
-        alert('Este recurso no está disponible.');
+  
+          // Mostrar alerta de éxito
+          await Swal.fire({
+            title: 'Éxito',
+            text: `Se agregaron ${cantidad} unidades de "${recurso.nombreRecurso}" correctamente a la solicitud.`,
+            icon: 'success',
+            confirmButtonText: 'Ok',
+          });
+        } else {
+          Swal.fire({
+            title: 'Error',
+            text: 'Este recurso no está disponible.',
+            icon: 'error',
+            confirmButtonText: 'Ok',
+          });
         }
-       
-    }
-        
-    
-      
-        
-       catch (error) {
+      } catch (error) {
         console.error('Error al actualizar la solicitud:', error);
         Swal.fire({
           title: 'Error',
           text: 'Hubo un problema al agregar el recurso',
           icon: 'error',
-          confirmButtonText: 'Ok'
+          confirmButtonText: 'Ok',
         });
       }
     }
   }
-
+  
+  
 
   desactivarRecurso(recurso: Recurso) {
     const rutaDoc = doc(this.firestore, "Recursos", recurso.recursoId);

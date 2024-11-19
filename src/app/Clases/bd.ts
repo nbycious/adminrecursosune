@@ -37,6 +37,7 @@ export class Recurso{
     Costo=""; //lo que le costo del producto a la institucion, en caso de que exista un daño saber cuanto cobrar
     cantidadReal=0; //cantidad que hay en el inventario realmente
     cantidadDisp=0; //la cantidad que hay disponible (puede disminuir cuando se solicita)
+    cantidadSeleccionada=0; 
     //unidadMedida="";//por ejemplo si es un cable metros etc
     horarioDisp="";//horario ene l que esta disponible el recurso
     claveAdmin = "" //clave que el administrador asigna al recurso
@@ -59,6 +60,7 @@ export class Recurso{
         this.cantidadReal= data.cantidadReal;
         this.cantidadDisp = data.cantidadDisp;
         this.Categoria = data.Categoria;
+        this.cantidadSeleccionada = data.cantidadSeleccionada;
     }
 }
 export class Inventario{
