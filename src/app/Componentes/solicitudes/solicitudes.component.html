@@ -1,11 +1,12 @@
 <app-navbar></app-navbar>
-<h1 class="md:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 text-center" style=" margin-top: 25px; font-size: 35px;">Solicitar un recurso</h1>
+<h1 *ngIf="usuario.Rol == 'Alumno'"class="md:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 text-center" style=" margin-top: 25px; font-size: 35px;">Solicitar un recurso</h1>
+<h1 *ngIf="usuario.Rol == 'Administrador'" class="md:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 text-center" style=" margin-top: 25px; font-size: 35px;">Solicitudes enviadas</h1>
 
 <div class="container mt-4">
     <div class="row justify-content-center">
-        <div class="col-sm-6">
+        <div class="col-sm-6" *ngIf="usuario.Rol =='Alumno'" >
             <div class="filter-container custom-filter-container card p-3 shadow-sm"  data-bs-toggle="modal" data-bs-target="#modalSolicitud" (click)="abrirModalNuevaSolicitud()" >
-                <button  type="button" class="btn btn-outline-success">Nueva solicitud</button>
+                <button type="button" class="btn btn-outline-success">Nueva solicitud</button>
                 
             </div>
             <div class="col-6" style="margin-bottom: 60px;">
@@ -22,12 +23,14 @@
            
 
     </div>
-    <h3 class="text-center">Mis solicitudes</h3>
+    <h3 *ngIf="usuario.Rol =='Alumno'" class="text-center">Mis solicitudes</h3>
     <div class="container">
       <table class="table table-bordered text-center">
         <thead class="table-light">
             <tr>
                
+                <th  *ngIf="usuario.Rol =='Administrador'" scope="col">Matrícula Solicitante</th> 
+                <th  *ngIf="usuario.Rol =='Administrador'" scope="col">Nombre Solicitante</th>                
                 <th scope="col">Fecha de Préstamo</th>
                 <th scope="col">Fecha de Devolución</th>
                 <th scope="col">Recursos Solicitados</th>
@@ -37,7 +40,8 @@
         </thead>
         <tbody>
             <tr *ngFor="let solicitud of listaSolicitudes">
-               
+                <td *ngIf="usuario.Rol =='Administrador'" >{{ solicitud.matriculaSolic }}</td>
+                <td *ngIf="usuario.Rol =='Administrador'" >{{ solicitud.nombreSolicitante }}</td>
                 <td>{{ solicitud.fechaInicio }}</td>
                 <td>{{ solicitud.fechaFin }}</td>
                 <td>{{ solicitud.recursos }}</td>
@@ -65,7 +69,7 @@
         <form #solicitudForm="ngForm">
           <div class="row mb-3">
             <div class="col-md-6">
-              <label for="nombreSolicitante">Nombre del solicitante:</label>
+              <label for="nombreSolicitantes">Nombre del solicitante:</label>
               <input type="text" id="nombreSolicitante" class="form-control" [(ngModel)]="nuevaSolicitud.nombreSolicitante" name="nombreSolicitante" required>
             </div>
             <div class="col-md-6">
