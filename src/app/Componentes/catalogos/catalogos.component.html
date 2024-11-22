@@ -43,9 +43,7 @@
               <option value="EQUIPO DE SEGURIDAD">EQUIPO DE SEGURIDAD</option>
               <option value="HERRAMIENTA">HERRAMIENTA</option>
               <option value="IMPRESORA 3D">IMPRESORA 3D</option>
-              <option value="EQUIPO PETROLERA">EQUIPO PETROLERA</option>
               <option value="EQUIPO ELECTRICO">EQUIPO ELECTRICO</option>
-              <option value="EQUIPO QUIMICO">EQUIPO QUIMICO</option>
             </select>
           </div>
 
@@ -224,9 +222,7 @@
               <option value="EQUIPO DE SEGURIDAD">EQUIPO DE SEGURIDAD</option>
               <option value="HERRAMIENTA">HERRAMIENTA</option>
               <option value="IMPRESORA 3D">IMPRESORA 3D</option>
-              <option value="EQUIPO PETROLERA">EQUIPO PETROLERA</option>
               <option value="EQUIPO ELECTRICO">EQUIPO ELECTRICO</option>
-              <option value="EQUIPO QUIMICO">EQUIPO QUIMICO</option>
               </select>
             </div>
             <div class="col-md-6">
@@ -295,7 +291,7 @@
   <section class="text-gray-600 body-font">
     <div class="container px-5 py-24 mx-auto">
       <div class="flex flex-wrap -m-4">
-        <div *ngFor="let recurso of recursosFiltrados " class="lg:w-1/4 md:w-1/2 p-4 w-full border border-black">
+        <div *ngFor="let recurso of recursosFiltrados.slice(0, 24)" class="lg:w-1/4 md:w-1/2 p-4 w-full border border-black">
 
           <a [routerLink]="['/Detalle', recurso.recursoId]" class="block relative h-48 rounded overflow-hidden">
             <img [src]="recurso.fotoRecurso" alt="fotoRecurso" class="object-cover object-center"><!--aqui debe de ir la imagen agregada por el input-->
@@ -309,9 +305,9 @@
               <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
             </svg>{{recurso.Ubicacion}}</p>
             
-            <div *ngIf="recurso.tipoRecurso !== 'Aula'">
-              <h4 *ngIf="usuario.Rol=='Administrador'"   class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline; margin-right: 3px;">En inventario: {{recurso.cantidadReal}}</h4>
-              <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline;">Disponible: {{recurso.cantidadDisp}}</h4>
+            <div>
+              <h4 *ngIf="usuario.Rol=='Administrador' && recurso.tipoRecurso !=='Aula'"   class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline; margin-right: 3px;">En inventario: {{recurso.cantidadReal}}</h4>
+              <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline;" *ngIf="recurso.tipoRecurso !=='Aula'">Disponible: {{recurso.cantidadDisp}}</h4>
               <button class="btn btn-primary" *ngIf=" solicitudActual.idSolicitud !== ''   && usuario.Rol === 'Alumno'" (click)="agregarRecursoASolicitud(recurso)">Agregar a Solicitud</button> 
             </div>
          
