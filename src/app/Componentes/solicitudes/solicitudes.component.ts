@@ -20,44 +20,40 @@ export class SolicitudesComponent implements OnInit {
   usuario = new Usuario();
 
   solisBD = collection(this.firestore, "Solicitudes")
-  esAdmin = false;
-  estadosSolicitud = ['Pendiente', 'Aprobada, en curso', 'Rechazada', 'Finalizada'];
-  //usuario = new Usuario();
+  
+  esAdmin: boolean = false;
+
+  //filtro por categoria
+  estatusSeleccionado="";
+  solisFiltradas:  Solicitud[] = [];
+  solicitudes: Solicitud[] = [];
 
 
   
-  constructor(private firestore: Firestore,
-    private router : Router
-  ) { // obtiene el usuario completo para poder autocompletar los campos de nombre y matricula del modal de nueva solicitud
+  constructor(private firestore: Firestore, private router: Router) {
     const usuarioGuardado = localStorage.getItem('usuario');
-    
-   //obtiene el id del usuario para poder mostrar sus solicitudes
     const usuarioId = localStorage.getItem('usuarioId');
-
-    if(usuarioGuardado){
-      this.usuario.setData(JSON.parse(usuarioGuardado));
-      this.esAdmin = this.usuario.Rol === 'Administrador'; // Verifica si el usuario es administrador
-      this.nuevaSolicitud.nombreSolicitante = this.usuario.Nombre;
-      this.nuevaSolicitud.matriculaSolic = this.usuario.Matricula;
-
-         // Si es admin, obtén todas las solicitudes
-         if (this.esAdmin) {
-          collectionData(this.solisBD, { idField: 'id' }).subscribe((data: any) => {
-            this.listaSolicitudes = data;
-          });
-        } else if (usuarioId) {
-          // Si es usuario normal, solo obtén sus solicitudes
-          const userSolicitudQuery = query(this.solisBD, where('usuarioId', '==', usuarioId));
-          collectionData(userSolicitudQuery, { idField: 'id' }).subscribe((data: any) => {
-            this.listaSolicitudes = data;
-          });
-        }
-    }
-
-
   
+    // Variable para determinar si el usuario es administrador
+    const rolUsuario = usuarioGuardado ? JSON.parse(usuarioGuardado).Rol : null;
+    const esAdmin = rolUsuario === 'Administrador';
+    if (esAdmin) {
+      collectionData(this.solisBD, { idField: 'id' }).subscribe((data: any) => {
+        this.listaSolicitudes = data; // Todas las solicitudes
+        this.solicitudes = [...data]; // Asigna las solicitudes al array utilizado para el filtrado
+        this.solisFiltradas = [...data]; // Inicializa las solicitudes filtradas
+      });
+    } else if (usuarioId) {
+      const userSolicitudQuery = query(this.solisBD, where('usuarioId', '==', usuarioId));
+      collectionData(userSolicitudQuery, { idField: 'id' }).subscribe((data: any) => {
+        this.listaSolicitudes = data; // Solicitudes del usuario
+        this.solicitudes = [...data];
+        this.solisFiltradas = [...data];
+      });
+    }
+    
      else {
-      // Si no se encuentra el ID del usuario, mostrar un mensaje de error o redirigir al inicio de sesión
+      // Si no se encuentra el ID del usuario, redirigir al inicio de sesión
       Swal.fire({
         title: 'Error',
         text: 'No se pudo obtener el ID del usuario. Por favor, inicie sesión nuevamente.',
@@ -67,22 +63,20 @@ export class SolicitudesComponent implements OnInit {
         this.router.navigate(['/Login']); // Redirige al login si no hay usuarioId
       });
     }
-
-    if (usuarioGuardado) {
-      // Parsear los datos y asignarlos al objeto usuario
-      this.usuario.setData(JSON.parse(usuarioGuardado));
   
-      // Autocompletar los campos del formulario con los datos del usuario
+    // Si hay un usuario guardado, cargar sus datos
+    if (usuarioGuardado) {
+      this.usuario.setData(JSON.parse(usuarioGuardado));
       this.nuevaSolicitud.nombreSolicitante = this.usuario.Nombre;
       this.nuevaSolicitud.matriculaSolic = this.usuario.Matricula;
-      console.log(this.nuevaSolicitud.matriculaSolic)
-      console.log(this.nuevaSolicitud.nombreSolicitante)
     } else {
       Swal.fire("Error", "No se encontró información del usuario autenticado", "error");
     }
-}
-  ngOnInit(): void {
+  }
   
+  ngOnInit(): void {
+    console.log('Solicitudes:', this.solicitudes);
+    this.solisFiltradas = this.solicitudes; 
   }
 
  async  agregarSolicitud(form: NgForm) {
@@ -152,33 +146,25 @@ export class SolicitudesComponent implements OnInit {
     }
   
   
-
-  // Método para que el admin actualice el estado de una solicitud
-  async actualizarEstadoSolicitud(solicitud: Solicitud, nuevoEstado: string) {
+    
+  // Actualizar el estado de una solicitud
+  async actualizarEstado(solicitud: Solicitud, nuevoEstado: string) {
+    const solicitudRef = doc(this.firestore, `Solicitudes/${solicitud.idSolicitud}`);
     try {
-      const solicitudRef = doc(this.firestore, "Solicitudes", solicitud.idSolicitud);
-      await updateDoc(solicitudRef, {
-        estado: nuevoEstado
-      });
-
-      Swal.fire({
-        title: 'Éxito',
-        text: `Estado de la solicitud actualizado a: ${nuevoEstado}`,
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-
+      await updateDoc(solicitudRef, { estado: nuevoEstado });
+      solicitud.estado = nuevoEstado; // Actualizar localmente el estado
+      
+      Swal.fire('Éxito', 'Estado actualizado correctamente', 'success');
     } catch (error) {
       console.error('Error al actualizar el estado:', error);
-      Swal.fire({
-        title: 'Error',
-        text: 'No se pudo actualizar el estado de la solicitud',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
+      Swal.fire('Error', 'No se pudo actualizar el estado', 'error');
     }
+    
+    
   }
 
+
+  //funcion para el boton de nueva solicitud que solo ve el alumno
    async abrirModalNuevaSolicitud(){
 
     
@@ -192,11 +178,11 @@ export class SolicitudesComponent implements OnInit {
     );
    
     const existingSolicitudSnapshot = await getDocs(existingSolicitudRef);
-    if (!existingSolicitudSnapshot.empty) {
+    if (this.nuevaSolicitud.estado == "Enviada") {
       // El usuario ya tiene una solicitud activa, mostrar un mensaje de error
       Swal.fire({
         title: 'Recuerda',
-        text: 'Ya tienes una solicitud activa. No puedes crear una nueva hasta que el préstamo finalice.',
+        text: 'Ya tienes una solicitud activa. No puedes crear una nueva hasta que el administrador apruebe esta.',
         icon: 'warning',
         confirmButtonText: 'OK',
         allowOutsideClick: false
@@ -220,6 +206,16 @@ export class SolicitudesComponent implements OnInit {
 
     
   }
+
+
+  aplicarFiltros() {
+    this.solisFiltradas = this.solicitudes.filter(solicitud => {
+      const cumpleEstatus = !this.estatusSeleccionado || solicitud.estado === this.estatusSeleccionado;
+      return cumpleEstatus;
+    });
+  }
+  
+  //generar un ID aleatoria:
   generateRandomString = (num: number) => {
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       let result1 = '';
