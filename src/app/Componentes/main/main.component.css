@@ -153,3 +153,60 @@ body {
     flex-shrink: 0;
     
 }
+
+/* Estilos específicos para el botón "Agregar desde Excel" */
+#excelInput {
+    display: none;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* Botón de Agregar Excel con tamaño aumentado */
+.btn-outline-success {
+    font-size: 1.5rem; /* Tamaño de fuente aumentado */
+    padding: 50px 50px; /* Padding para hacer el botón más grande */
+    border-radius: 5px;
+    color: #198754; /* Color del borde */
+    background-color: transparent; /* Fondo transparente */
+    border: 2px solid #198754; /* Bordes verdes */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Efecto hover del botón */
+.btn-outline-success:hover {
+    background-color: #198754; /* Fondo verde al hacer hover */
+    color: white; /* Texto blanco en hover */
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2); /* Sombra más intensa */
+}
+
+/* Asegurar que el botón esté centrado dentro del tab */
+.tab-pane {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.tab-content{
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    height: 100vh;
+}
+

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import readXlsxFile from 'read-excel-file';
 
 import { MainComponent } from './main.component';
 
@@ -23,3 +24,4 @@ describe('MainComponent', () => {
     expect(component).toBeTruthy();
   });
 });
+
