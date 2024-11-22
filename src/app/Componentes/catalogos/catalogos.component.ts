@@ -109,7 +109,7 @@ export class CatalogosComponent implements OnInit {
         const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual.idSolicitud);
         await updateDoc(solicitudRef, { estado: 'Enviada', usuarioId: usuarioId });
   
-        // Limpiar la variable solicitudActual, creo q el problema esta aquí lol
+        // Limpiar la variable solicitudActual
         this.solicitudActual = new Solicitud();
   
         // Mostrar mensaje de éxito
@@ -381,62 +381,63 @@ fotoPreview: string | ArrayBuffer | null = null;
       return;
     }
   
-    const result = await Swal.fire({
-      title: '¿Agregar recurso?',
-      text: `Selecciona la cantidad de "${recurso.nombreRecurso}" a agregar (disponible: ${recurso.cantidadDisp})`,
-      icon: 'question',
-      input: 'number',
-      inputAttributes: {
-        min: '1',
-        max: recurso.cantidadDisp.toString(),
-        step: '1',
-      },
-      inputLabel: 'Cantidad',
-      showCancelButton: true,
-      confirmButtonText: 'Sí, agregar',
-      cancelButtonText: 'Cancelar',
-      inputValidator: (value) => {
-        if (!value || parseInt(value) <= 0 || parseInt(value) > recurso.cantidadDisp) {
-          return `Introduce una cantidad válida entre 1 y ${recurso.cantidadDisp}`;
-        }
-        return null;
-      },
-    });
+    
   
-    if (result.isConfirmed) {
-      const cantidad = parseInt(result.value || "0");
+    try {
+      if (recurso.tipoRecurso === 'Aula') {
+        // Caso de aula: se agrega directamente
+        recurso.cantidadSeleccionada = 1; // Para mantener consistencia, asignar una cantidad simbólica
+        this.solicitudActual!.recursos = this.solicitudActual!.recursos || [];
+        this.solicitudActual!.recursos.push( recurso.nombreRecurso, recurso.cantidadSeleccionada.toString());
   
-      try {
-        // Asignar la cantidad seleccionada
-        recurso.cantidadSeleccionada = cantidad;
+        // Actualizar en Firebase usando el servicio
+        const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual!.idSolicitud!);
+        await updateDoc(solicitudRef, {
+          recursos: this.solicitudActual!.recursos,
+        });
   
-        // Inicializar el array de recursos si no existe
-        if (!this.solicitudActual!.recursos) {
-          this.solicitudActual!.recursos = [];
-        }
+        await Swal.fire({
+          title: 'Éxito',
+          text: `El aula "${recurso.nombreRecurso}" se ha añadido a la solicitud correctamente.`,
+          icon: 'success',
+          confirmButtonText: 'Ok',
+        });
   
-        // Verificar si el recurso ya está en la solicitud
-        if (this.solicitudActual!.recursos.includes(recurso.nombreRecurso)) {
-          Swal.fire({
-            title: 'Advertencia',
-            text: 'Este recurso ya está en tu solicitud',
-            icon: 'warning',
-            confirmButtonText: 'Ok',
-          });
-          return;
-        }
+      } else {
+        // Caso de recursos con cantidad
+        const result = await Swal.fire({
+          title: '¿Agregar recurso?',
+          text: `Selecciona la cantidad de "${recurso.nombreRecurso}" a agregar (disponible: ${recurso.cantidadDisp})`,
+          icon: 'question',
+          input: 'number',
+          inputAttributes: {
+            min: '1',
+            max: recurso.cantidadDisp.toString(),
+            step: '1',
+          },
+          inputLabel: 'Cantidad',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, agregar',
+          cancelButtonText: 'Cancelar',
+          inputValidator: (value) => {
+            if (!value || parseInt(value) <= 0 || parseInt(value) > recurso.cantidadDisp) {
+              return `Introduce una cantidad válida entre 1 y ${recurso.cantidadDisp}`;
+            }
+            return null;
+          },
+        });
   
-        if (recurso.cantidadDisp > 0) {
-          this.solicitudActual!.recursos.push(recurso.nombreRecurso);
+        if (result.isConfirmed) {
+          const cantidad = parseInt(result.value || "0");
+  
+          recurso.cantidadSeleccionada = cantidad;
+          this.solicitudActual!.recursos = this.solicitudActual!.recursos || [];
+          this.solicitudActual!.recursos.push( recurso.nombreRecurso, recurso.cantidadSeleccionada.toString() );
   
           // Actualizar la cantidad disponible
           const nuevaCantidad = recurso.cantidadDisp - cantidad;
-  
           await this.catalogoServ.actualizarCantidadDisponible(recurso.recursoId, nuevaCantidad);
-  
           recurso.cantidadDisp = nuevaCantidad;
-  
-          console.log(`Recurso ${recurso.nombreRecurso} actualizado.`);
   
           // Actualizar en Firebase usando el servicio
           const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual!.idSolicitud!);
@@ -444,32 +445,25 @@ fotoPreview: string | ArrayBuffer | null = null;
             recursos: this.solicitudActual!.recursos,
           });
   
-          // Mostrar alerta de éxito
           await Swal.fire({
             title: 'Éxito',
             text: `Se agregaron ${cantidad} unidades de "${recurso.nombreRecurso}" correctamente a la solicitud.`,
             icon: 'success',
             confirmButtonText: 'Ok',
           });
-        } else {
-          Swal.fire({
-            title: 'Error',
-            text: 'Este recurso no está disponible.',
-            icon: 'error',
-            confirmButtonText: 'Ok',
-          });
         }
-      } catch (error) {
-        console.error('Error al actualizar la solicitud:', error);
-        Swal.fire({
-          title: 'Error',
-          text: 'Hubo un problema al agregar el recurso',
-          icon: 'error',
-          confirmButtonText: 'Ok',
-        });
       }
+    } catch (error) {
+      console.error('Error al actualizar la solicitud:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Hubo un problema al agregar el recurso',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
     }
   }
+  
   
   
 
