@@ -36,17 +36,16 @@ export class LoginComponent implements OnInit {
 
         // Guardar el ID del usuario en localStorage
         localStorage.setItem('usuarioId', this.credencial.UsuarioId);
+       
+        localStorage.setItem('rol', this.credencial.Rol);
+
   
         // Guardar el usuario en localStorage
         localStorage.setItem('usuario', JSON.stringify(this.credencial));
   
-        // Redirigir según el rol del usuario
-        if (this.credencial.Rol === 'Administrador') {
-          this.navegacion.navigate(['Solicitudes']);
-        } 
-        else if(this.credencial.Rol === 'Alumno'){
+       
           this.navegacion.navigate(['Main'])
-        }
+        
   
       } else {
         Swal.fire("No se encontraron usuarios con esas credenciales");

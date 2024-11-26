@@ -1,5 +1,5 @@
 
-<app-navbar></app-navbar>
+<app-navbar *ngIf="usuario.Rol=='Alumno'"></app-navbar>
 <h1 class="md:text-3xl text-2xl font-medium title-font mb-4 text-gray-900 text-center" style="margin-top: 25px; font-size: 35px;">
   Catálogo de Recursos Laboratorio de Ingeniería
 </h1>
@@ -146,29 +146,13 @@
               <option *ngIf="!esAula" value="REDES">REDES</option>
             </select>
           </div>
-          <!-- Solo mostrar el campo Costo si el tipo de recurso NO es "Aula" -->
-          <div class="col-md-6" *ngIf="!esAula">
-            <label for="costo">Costo:</label>
-            <input type="text" id="costoRecurso" class="form-control" [(ngModel)]="nuevoRecurso.Costo" name="costoRecurso">
-          </div>
-        </div>
-
-        <!-- Cuarta Fila -->
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="descripcionRecurso">Descripción:</label>
-            <textarea id="descripcionRecurso" class="form-control" [(ngModel)]="nuevoRecurso.descripcion" name="descripcionRecurso"></textarea>
-          </div>
-          <!-- Solo mostrar el campo Cantidad si el tipo de recurso NO es "Aula" -->
           <div class="col-md-6" *ngIf="!esAula">
             <label for="clave">Cantidad:</label>
             <input type="text" id="cantidadReal" class="form-control" [(ngModel)]="nuevoRecurso.cantidadReal" name="cantidadReal" required>
           </div>
-          <div class="col-md-6">
-            <label for="clave">Clave:</label>
-            <input type="text" id="claveRecurso" class="form-control" [(ngModel)]="nuevoRecurso.claveAdmin" name="claveRecurso">
-          </div>
         </div>
+
+      
 
       </form>
     </div>
@@ -253,29 +237,14 @@
               <option *ngIf="!esAula" value="REDES">REDES</option>
             </select>
           </div>
-          <!-- Solo mostrar el campo Costo si el tipo de recurso NO es "Aula" -->
-          <div class="col-md-6" *ngIf="!esAula">
-            <label for="costo">Costo:</label>
-            <input type="text" id="costoRecurso" class="form-control" [(ngModel)]="editRecurso.Costo" name="costoRecurso">
-          </div>
+        <!-- Solo mostrar el campo Cantidad si el tipo de recurso NO es "Aula" -->
+        <div class="col-md-6" *ngIf="!esAula">
+          <label for="clave">Cantidad:</label>
+          <input type="text" id="cantidadReal" class="form-control" [(ngModel)]="editRecurso.cantidadReal" name="cantidadReal" required>
+        </div>
         </div>
 
-        <!-- Cuarta Fila -->
-        <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="descripcionRecurso">Descripción:</label>
-            <textarea id="descripcionRecurso" class="form-control" [(ngModel)]="editRecurso.descripcion" name="descripcionRecurso"></textarea>
-          </div>
-          <!-- Solo mostrar el campo Cantidad si el tipo de recurso NO es "Aula" -->
-          <div class="col-md-6" *ngIf="!esAula">
-            <label for="clave">Cantidad:</label>
-            <input type="text" id="cantidadReal" class="form-control" [(ngModel)]="editRecurso.cantidadReal" name="cantidadReal" required>
-          </div>
-          <div class="col-md-6">
-            <label for="clave">Clave:</label>
-            <input type="text" id="claveRecurso" class="form-control" [(ngModel)]="editRecurso.claveAdmin" name="claveRecurso">
-          </div>
-        </div>
+       
 
             
         </form>

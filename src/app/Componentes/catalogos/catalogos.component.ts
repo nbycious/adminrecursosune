@@ -184,7 +184,7 @@ export class CatalogosComponent implements OnInit {
       
       const cumpleBusqueda = !this.searchTerm || 
         recurso.nombreRecurso.toLowerCase().includes(this.searchTerm.toLowerCase())
-        console.log(recurso.nombreRecurso)
+       
       
       // Filtro por tipo
       const cumpleTipo = !this.tipoSeleccionado ||
