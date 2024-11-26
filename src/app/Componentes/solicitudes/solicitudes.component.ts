@@ -159,7 +159,7 @@ export class SolicitudesComponent implements OnInit {
       console.error('Error al actualizar el estado:', error);
       Swal.fire('Error', 'No se pudo actualizar el estado', 'error');
     }
-    
+  
     
   }
 
