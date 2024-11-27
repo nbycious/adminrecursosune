@@ -277,7 +277,7 @@
             <div>
               <h4 *ngIf="usuario.Rol=='Administrador' && recurso.tipoRecurso !=='Aula'"   class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline; margin-right: 3px;">En inventario: {{recurso.cantidadReal}}</h4>
               <h4 class="text-gray-500 text-xs tracking-widest title-font mb-1" style="display: inline;" *ngIf="recurso.tipoRecurso !=='Aula'">Disponible: {{recurso.cantidadDisp}}</h4>
-              <button class="btn btn-primary" *ngIf=" solicitudActual.idSolicitud !== ''   && usuario.Rol === 'Alumno'" (click)="agregarRecursoASolicitud(recurso)">Agregar a Solicitud</button> 
+              <button class="btn btn-primary" *ngIf=" solicitudActual.idSolicitud !== ''   && usuario.Rol === 'Alumno' && recurso.cantidadDisp > 0"  (click)="agregarRecursoASolicitud(recurso)">Agregar a Solicitud</button> 
             </div>
          
 
