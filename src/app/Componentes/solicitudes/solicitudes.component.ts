@@ -146,10 +146,21 @@ export class SolicitudesComponent implements OnInit {
     }
   
   
-    
-  // Actualizar el estado de una solicitud
-  async actualizarEstado(solicitud: Solicitud, nuevoEstado: string) {
-    const solicitudRef = doc(this.firestore, `Solicitudes/${solicitud.idSolicitud}`);
+ // Actualizar el estado de una solicitud
+async actualizarEstado(solicitud: Solicitud, nuevoEstado: string) {
+  const solicitudRef = doc(this.firestore, `Solicitudes/${solicitud.idSolicitud}`);
+  
+  // Mostrar alerta de confirmación antes de actualizar
+  const result = await Swal.fire({
+    title: '¿Está seguro?',
+    text: '¿Está seguro de cambiar el estatus de la solicitud?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Aceptar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (result.isConfirmed) {
     try {
       await updateDoc(solicitudRef, { estado: nuevoEstado });
       solicitud.estado = nuevoEstado; // Actualizar localmente el estado
@@ -159,10 +170,10 @@ export class SolicitudesComponent implements OnInit {
       console.error('Error al actualizar el estado:', error);
       Swal.fire('Error', 'No se pudo actualizar el estado', 'error');
     }
-  
-    
+  } else {
+    Swal.fire('Cancelado', 'El estado no ha sido modificado', 'info');
   }
-
+}
 
   //funcion para el boton de nueva solicitud que solo ve el alumno
    async abrirModalNuevaSolicitud(){
