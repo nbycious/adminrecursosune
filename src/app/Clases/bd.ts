@@ -63,31 +63,7 @@ export class Recurso{
         this.cantidadSeleccionada = data.cantidadSeleccionada;
     }
 }
-export class Inventario{
-    constructor(){ }
-    idinventario="";
-    idRecurso="";
-    cantidadExistencia: number =0;
-    cantidadDisponible: number = 0;
-    Ubicacion=""
-    nombreRecurso=""
-    unidadMedida=""
-    horarioDisp=""
-    clave="" 
 
-   setData(data:any){
-       this.idinventario = data.idinventario;
-       this.idRecurso = data.idRecurso;
-       this.cantidadExistencia = data.cantidadExistencia;
-       this.cantidadDisponible = data.cantidadDisponible;
-       this.Ubicacion = data.Ubicacion;
-       this.nombreRecurso = data.nombreRecurso;
-       this.unidadMedida = data.unidadMedida;
-       this.horarioDisp = data.horarioDisp;
-       this.clave = data.clave;
-    }
-
-}
 export class Solicitud {
     constructor(){this.recursos = []; }
 
