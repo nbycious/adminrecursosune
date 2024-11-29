@@ -22,30 +22,42 @@ export class SolicitudesComponent implements OnInit {
   solisBD = collection(this.firestore, "Solicitudes")
   
   esAdmin: boolean = false;
-  //usuario = new Usuario();
+
+  //filtro por categoria
+  estatusSeleccionado="";
+  solisFiltradas:  Solicitud[] = [];
+  solicitudes: Solicitud[] = [];
+  solicitudSeleccionada: any = null;
+  // Tipo para los filtros de fecha
+fechaSeleccionada: string = ''; // Opciones posibles: '', 'Hoy', 'EstaSemana', 'EsteMes'
+
 
 
   
-  constructor(private firestore: Firestore,
-    private router : Router
-  ) { // obtiene el usuario completo para poder autocompletar los campos de nombre y matricula del modal de nueva solicitud
+  constructor(private firestore: Firestore, private router: Router) {
     const usuarioGuardado = localStorage.getItem('usuario');
-    
-   //obtiene el id del usuario para poder mostrar sus solicitudes
     const usuarioId = localStorage.getItem('usuarioId');
-
-    collectionData(this.solisBD, { idField: 'id' }).subscribe((data: any) => {
-      this.listaSolicitudes = data;
-    });
-    if (usuarioId) {
-      // Filtrar las solicitudes para el usuario autenticado
-      const userSolicitudQuery = query(this.solisBD, where('usuarioId', '==', usuarioId));
-
-      collectionData(userSolicitudQuery, { idField: 'id' }).subscribe((data: any) => {
-        this.listaSolicitudes = data;
+  
+    // Variable para determinar si el usuario es administrador
+    const rolUsuario = usuarioGuardado ? JSON.parse(usuarioGuardado).Rol : null;
+    const esAdmin = rolUsuario === 'Administrador';
+    if (esAdmin) {
+      collectionData(this.solisBD, { idField: 'id' }).subscribe((data: any) => {
+        this.listaSolicitudes = data; // Todas las solicitudes
+        this.solicitudes = [...data]; // Asigna las solicitudes al array utilizado para el filtrado
+        this.solisFiltradas = [...data]; // Inicializa las solicitudes filtradas
       });
-    } else {
-      // Si no se encuentra el ID del usuario, mostrar un mensaje de error o redirigir al inicio de sesión
+    } else if (usuarioId) {
+      const userSolicitudQuery = query(this.solisBD, where('usuarioId', '==', usuarioId));
+      collectionData(userSolicitudQuery, { idField: 'id' }).subscribe((data: any) => {
+        this.listaSolicitudes = data; // Solicitudes del usuario
+        this.solicitudes = [...data];
+        this.solisFiltradas = [...data];
+      });
+    }
+    
+     else {
+      // Si no se encuentra el ID del usuario, redirigir al inicio de sesión
       Swal.fire({
         title: 'Error',
         text: 'No se pudo obtener el ID del usuario. Por favor, inicie sesión nuevamente.',
@@ -55,23 +67,26 @@ export class SolicitudesComponent implements OnInit {
         this.router.navigate(['/Login']); // Redirige al login si no hay usuarioId
       });
     }
-
-    if (usuarioGuardado) {
-      // Parsear los datos y asignarlos al objeto usuario
-      this.usuario.setData(JSON.parse(usuarioGuardado));
   
-      // Autocompletar los campos del formulario con los datos del usuario
+    // Si hay un usuario guardado, cargar sus datos
+    if (usuarioGuardado) {
+      this.usuario.setData(JSON.parse(usuarioGuardado));
       this.nuevaSolicitud.nombreSolicitante = this.usuario.Nombre;
       this.nuevaSolicitud.matriculaSolic = this.usuario.Matricula;
-      console.log(this.nuevaSolicitud.matriculaSolic)
-      console.log(this.nuevaSolicitud.nombreSolicitante)
     } else {
       Swal.fire("Error", "No se encontró información del usuario autenticado", "error");
     }
-}
-  ngOnInit(): void {
-  
   }
+  
+  ngOnInit(): void {
+    console.log('Solicitudes:', this.solicitudes);
+    this.solisFiltradas = this.solicitudes; 
+  }
+ 
+  seleccionarSolicitud(solicitud: any) {
+    this.solicitudSeleccionada = solicitud;
+  }
+  
 
  async  agregarSolicitud(form: NgForm) {
 
@@ -140,8 +155,44 @@ export class SolicitudesComponent implements OnInit {
     }
   
   
+ // Guardar el estado original fuera de la función
+estadoOriginal: string = '';
+
+async actualizarEstado(solicitud: Solicitud, nuevoEstado: string) {
+  const solicitudRef = doc(this.firestore, `Solicitudes/${solicitud.idSolicitud}`);
+
+  // Guardar el estado original antes de mostrar la alerta
+  this.estadoOriginal = solicitud.estado;
+
+  // Mostrar alerta de confirmación antes de actualizar
+  const result = await Swal.fire({
+    title: '¿Está seguro?',
+    text: '¿Está seguro de cambiar el estatus de la solicitud?',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonText: 'Aceptar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (result.isConfirmed) {
+    try {
+      await updateDoc(solicitudRef, { estado: nuevoEstado });
+      solicitud.estado = nuevoEstado; // Actualizar localmente el estado
+      
+      Swal.fire('Éxito', 'Estado actualizado correctamente', 'success');
+    } catch (error) {
+      console.error('Error al actualizar el estado:', error);
+      Swal.fire('Error', 'No se pudo actualizar el estado', 'error');
+    }
+  } else {
+    Swal.fire('Cancelado', 'El estado no ha sido modificado', 'info');
+    // Restaurar el valor original del estado en el combobox
+    solicitud.estado = this.estadoOriginal;
+  }
+}
 
 
+  //funcion para el boton de nueva solicitud que solo ve el alumno
    async abrirModalNuevaSolicitud(){
 
     
@@ -155,11 +206,11 @@ export class SolicitudesComponent implements OnInit {
     );
    
     const existingSolicitudSnapshot = await getDocs(existingSolicitudRef);
-    if (!existingSolicitudSnapshot.empty) {
+    if (this.nuevaSolicitud.estado == "Enviada") {
       // El usuario ya tiene una solicitud activa, mostrar un mensaje de error
       Swal.fire({
         title: 'Recuerda',
-        text: 'Ya tienes una solicitud activa. No puedes crear una nueva hasta que el préstamo finalice.',
+        text: 'Ya tienes una solicitud activa. No puedes crear una nueva hasta que el administrador apruebe esta.',
         icon: 'warning',
         confirmButtonText: 'OK',
         allowOutsideClick: false
@@ -183,6 +234,57 @@ export class SolicitudesComponent implements OnInit {
 
     
   }
+
+
+  aplicarFiltros() {
+    this.solisFiltradas = this.solicitudes.filter(solicitud => {
+      // Validación de estatus
+      const cumpleEstatus = !this.estatusSeleccionado || solicitud.estado === this.estatusSeleccionado;
+  
+      // Validación de fechas
+     
+  
+      return cumpleEstatus;
+    });
+  }
+  
+  filtrarPorFecha(){
+    this.solisFiltradas = this.solicitudes.filter(solicitud =>{
+        let cumpleFecha = true;
+        if (this.fechaSeleccionada) {
+          const hoy = new Date();
+          const fechaInicio = new Date(solicitud.fechaInicio);
+          const fechaFin = new Date(solicitud.fechaFin);
+    
+          switch (this.fechaSeleccionada) {
+            case 'Hoy':
+              cumpleFecha = fechaInicio <= hoy && fechaFin >= hoy;
+              break;
+            case 'EstaSemana':
+              const inicioSemana = new Date(hoy);
+              inicioSemana.setDate(hoy.getDate() - hoy.getDay()); // Primer día de la semana
+              const finSemana = new Date(hoy);
+              finSemana.setDate(hoy.getDate() + (6 - hoy.getDay())); // Último día de la semana
+              cumpleFecha = (fechaInicio >= inicioSemana && fechaInicio <= finSemana) ||
+                            (fechaFin >= inicioSemana && fechaFin <= finSemana);
+              break;
+            case 'EsteMes':
+              const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1); // Primer día del mes
+              const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0); // Último día del mes
+              cumpleFecha = (fechaInicio >= inicioMes && fechaInicio <= finMes) ||
+                            (fechaFin >= inicioMes && fechaFin <= finMes);
+              break;
+            default:
+              cumpleFecha = true; // Mostrar todas si no hay filtro de fecha
+          }
+        }
+        return cumpleFecha;
+      }
+    )
+   
+  }
+  
+  //generar un ID aleatoria:
   generateRandomString = (num: number) => {
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       let result1 = '';

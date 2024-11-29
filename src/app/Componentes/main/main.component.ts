@@ -11,7 +11,8 @@ export class MainComponent implements OnInit {
 
   credencial = new Usuario();
   usuario= new Usuario();
-  
+  rol: string | null = null;
+
   constructor(private router: Router) {   
     this.credencial = history.state
     
@@ -20,12 +21,20 @@ export class MainComponent implements OnInit {
   navegaraCatalogos(){
     this.router.navigate(['/Catalogos'])
   }
-  navegaraContacto(){
-    this.router.navigate(['/Contacto'])
-  }
+ 
   ngOnInit(): void {
-    console.log(this.usuario.Rol);
+    this.rol = localStorage.getItem('rol');
+  console.log('Rol del usuario:', this.rol);
+    
 
   }
-
+  logout(): void {
+    // Limpiar el localStorage
+    localStorage.removeItem('usuario'); // Elimina los datos del usuario
+    localStorage.removeItem('rol'); // Elimina el rol, si está almacenado por separado
+    localStorage.clear(); // Alternativamente, limpia todo el localStorage si no necesitas otras claves
+  
+    // Redirigir al login
+    this.router.navigate(['/login']);
+  }
 }
