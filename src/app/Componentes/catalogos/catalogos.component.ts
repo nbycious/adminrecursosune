@@ -37,6 +37,7 @@ export class CatalogosComponent implements OnInit {
   public archivos: any = [];
   recursosBD= collection(this.firestore, "Recursos")
   esAula: boolean = false;
+  
  
   selectedFile: File | null = null;
 

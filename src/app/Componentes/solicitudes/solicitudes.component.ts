@@ -27,6 +27,10 @@ export class SolicitudesComponent implements OnInit {
   estatusSeleccionado="";
   solisFiltradas:  Solicitud[] = [];
   solicitudes: Solicitud[] = [];
+  solicitudSeleccionada: any = null;
+  // Tipo para los filtros de fecha
+fechaSeleccionada: string = ''; // Opciones posibles: '', 'Hoy', 'EstaSemana', 'EsteMes'
+
 
 
   
@@ -78,6 +82,11 @@ export class SolicitudesComponent implements OnInit {
     console.log('Solicitudes:', this.solicitudes);
     this.solisFiltradas = this.solicitudes; 
   }
+ 
+  seleccionarSolicitud(solicitud: any) {
+    this.solicitudSeleccionada = solicitud;
+  }
+  
 
  async  agregarSolicitud(form: NgForm) {
 
@@ -146,10 +155,15 @@ export class SolicitudesComponent implements OnInit {
     }
   
   
- // Actualizar el estado de una solicitud
+ // Guardar el estado original fuera de la función
+estadoOriginal: string = '';
+
 async actualizarEstado(solicitud: Solicitud, nuevoEstado: string) {
   const solicitudRef = doc(this.firestore, `Solicitudes/${solicitud.idSolicitud}`);
-  
+
+  // Guardar el estado original antes de mostrar la alerta
+  this.estadoOriginal = solicitud.estado;
+
   // Mostrar alerta de confirmación antes de actualizar
   const result = await Swal.fire({
     title: '¿Está seguro?',
@@ -172,8 +186,11 @@ async actualizarEstado(solicitud: Solicitud, nuevoEstado: string) {
     }
   } else {
     Swal.fire('Cancelado', 'El estado no ha sido modificado', 'info');
+    // Restaurar el valor original del estado en el combobox
+    solicitud.estado = this.estadoOriginal;
   }
 }
+
 
   //funcion para el boton de nueva solicitud que solo ve el alumno
    async abrirModalNuevaSolicitud(){
@@ -221,9 +238,50 @@ async actualizarEstado(solicitud: Solicitud, nuevoEstado: string) {
 
   aplicarFiltros() {
     this.solisFiltradas = this.solicitudes.filter(solicitud => {
+      // Validación de estatus
       const cumpleEstatus = !this.estatusSeleccionado || solicitud.estado === this.estatusSeleccionado;
+  
+      // Validación de fechas
+     
+  
       return cumpleEstatus;
     });
+  }
+  
+  filtrarPorFecha(){
+    this.solisFiltradas = this.solicitudes.filter(solicitud =>{
+        let cumpleFecha = true;
+        if (this.fechaSeleccionada) {
+          const hoy = new Date();
+          const fechaInicio = new Date(solicitud.fechaInicio);
+          const fechaFin = new Date(solicitud.fechaFin);
+    
+          switch (this.fechaSeleccionada) {
+            case 'Hoy':
+              cumpleFecha = fechaInicio <= hoy && fechaFin >= hoy;
+              break;
+            case 'EstaSemana':
+              const inicioSemana = new Date(hoy);
+              inicioSemana.setDate(hoy.getDate() - hoy.getDay()); // Primer día de la semana
+              const finSemana = new Date(hoy);
+              finSemana.setDate(hoy.getDate() + (6 - hoy.getDay())); // Último día de la semana
+              cumpleFecha = (fechaInicio >= inicioSemana && fechaInicio <= finSemana) ||
+                            (fechaFin >= inicioSemana && fechaFin <= finSemana);
+              break;
+            case 'EsteMes':
+              const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1); // Primer día del mes
+              const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0); // Último día del mes
+              cumpleFecha = (fechaInicio >= inicioMes && fechaInicio <= finMes) ||
+                            (fechaFin >= inicioMes && fechaFin <= finMes);
+              break;
+            default:
+              cumpleFecha = true; // Mostrar todas si no hay filtro de fecha
+          }
+        }
+        return cumpleFecha;
+      }
+    )
+   
   }
   
   //generar un ID aleatoria:
