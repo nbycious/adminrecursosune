@@ -162,11 +162,11 @@
           <div class="row mb-3">
             <div class="col-md-6">
               <label for="nombreSolicitantes">Nombre del solicitante:</label>
-              <input type="text" id="nombreSolicitante" class="form-control" [(ngModel)]="nuevaSolicitud.nombreSolicitante" name="nombreSolicitante" required>
+              <input type="text" id="nombreSolicitante" class="form-control" [(ngModel)]="nuevaSolicitud.nombreSolicitante" name="nombreSolicitante" required (keypress)="validacionLetras($event)">
             </div>
             <div class="col-md-6">
               <label for="matriculaSolic">Matrícula:</label>
-              <input type="text" id="matriculaSolic" class="form-control" [(ngModel)]="nuevaSolicitud.matriculaSolic" name="matriculaSolic" required>
+              <input type="text" id="matriculaSolic" class="form-control" [(ngModel)]="nuevaSolicitud.matriculaSolic" name="matriculaSolic" required (keypress)="validacionNumeros($event)">
             </div>
           </div>
           
@@ -182,7 +182,7 @@
             </div>
             <div class="col-md-6">
               <label for="materia">Materia: </label>
-              <input id="materia" type="text" class="form-control" name="materia" [(ngModel)]="nuevaSolicitud.materia" required>
+              <input id="materia" type="text" class="form-control" name="materia" [(ngModel)]="nuevaSolicitud.materia" required (keypress)="validacionLetras($event)">
             </div>
           </div>
           
