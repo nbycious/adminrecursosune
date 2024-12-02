@@ -505,6 +505,24 @@ fotoPreview: string | ArrayBuffer | null = null;
       }
     });
   }
+
+  validarNumeros(event: KeyboardEvent): void 
+  {
+    const charcode = event.key.charCodeAt(0);
+    if (!/[0-9]/.test(event.key))
+      {
+        event.preventDefault();
+      }
+  }
+
+  validarLetras(event: KeyboardEvent):void
+  {
+    const charcode = event.key.charCodeAt(0);
+    if (!/[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/.test(event.key))
+      {
+        event.preventDefault();
+      }
+  }
   
 }
 
