@@ -23,21 +23,14 @@
   
 }
 
-.navbar-links {
-  display: flex;
-  gap: 20px;
-}
 
-.navbar-links a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 18px;
-  font-weight: 500;
+.logout{
+  margin: auto;
+  cursor: pointer;
 }
-
-.navbar-links a:hover {
-  text-decoration: underline;
+.adminrec{
+  margin: auto;
 }
-.icon-user{
-    width:40px
+.inicio{
+  cursor: pointer;
 }
