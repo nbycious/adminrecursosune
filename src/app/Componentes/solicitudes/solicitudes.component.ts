@@ -296,4 +296,26 @@ async actualizarEstado(solicitud: Solicitud, nuevoEstado: string) {
       return result1;
   }
 
+  validacionNumeros(event: KeyboardEvent): void 
+  {
+    const charCode = event.key.charCodeAt(0);
+    if (!/[0-9]/.test(event.key))
+      {
+        event.preventDefault();
+      }
+  }
+
+  validacionLetras(event: KeyboardEvent): void
+  {
+    const charCode = event.key.charCodeAt(0);
+    if (!/[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/.test(event.key))
+      {
+        event.preventDefault();
+      }
+  }
+
+
+
+
+
   }

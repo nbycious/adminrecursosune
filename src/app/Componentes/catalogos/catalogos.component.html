@@ -14,7 +14,7 @@
         <div class="d-flex justify-content-center align-items-center mb-2">
           <!-- Botón solo visible para el administrador -->
           <div class="me-2">
-            <button type="button" *ngIf="usuario?.Rol === 'Administrador'" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalRecurso" (click)="abrirModalNuevoRecurso()">
+            <button type="button" *ngIf="usuario?.Rol === 'Administrador'" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalRecurso" (click)="abrirModalNuevoRecurso()"  >
               Agregar manualmente
             </button>
           </div>  
@@ -101,7 +101,7 @@
           </div>
           <div class="col-md-6">
             <label for="nombreRecurso">Nombre:</label>
-            <input type="text" id="nombreRecurso" class="form-control" [(ngModel)]="nuevoRecurso.nombreRecurso" name="nombreRecurso" required>
+            <input type="text" id="nombreRecurso" class="form-control" [(ngModel)]="nuevoRecurso.nombreRecurso" name="nombreRecurso" required (keypress)="validarLetras($event)">
             
           </div>
         </div>
@@ -148,7 +148,7 @@
           </div>
           <div class="col-md-6" *ngIf="!esAula">
             <label for="clave">Cantidad:</label>
-            <input type="text" id="cantidadReal" class="form-control" [(ngModel)]="nuevoRecurso.cantidadReal" name="cantidadReal" required>
+            <input type="text" id="cantidadReal" class="form-control" [(ngModel)]="nuevoRecurso.cantidadReal" name="cantidadReal" required (keypress)="validarNumeros($event)">
           </div>
         </div>
 
@@ -188,7 +188,7 @@
             </div>
             <div class="col-md-6">
               <label for="nombreRecurso">Nombre:</label>
-              <input type="text" id="nombreRecurso" class="form-control" [(ngModel)]="editRecurso.nombreRecurso" name="nombreRecurso" required #nombreRecurso="ngModel">
+              <input type="text" id="nombreRecurso" class="form-control" [(ngModel)]="editRecurso.nombreRecurso" name="nombreRecurso" required #nombreRecurso="ngModel"  (keypress)="validarLetras($event)">
               <div *ngIf="nombreRecurso.invalid && nombreRecurso.touched" class="text-danger">
                 El nombre del recurso es obligatorio.
               </div>
@@ -240,7 +240,7 @@
         <!-- Solo mostrar el campo Cantidad si el tipo de recurso NO es "Aula" -->
         <div class="col-md-6" *ngIf="!esAula">
           <label for="clave">Cantidad:</label>
-          <input type="text" id="cantidadReal" class="form-control" [(ngModel)]="editRecurso.cantidadReal" name="cantidadReal" required>
+          <input type="text" id="cantidadReal" class="form-control" [(ngModel)]="editRecurso.cantidadReal" name="cantidadReal" required (keypress)="validarNumeros($event)">
         </div>
         </div>
 
