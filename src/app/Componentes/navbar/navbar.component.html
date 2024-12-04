@@ -4,12 +4,12 @@
       <div class="navbar-logo">
         <img class="logo-img" src=".\assets\image 3.png">
       </div>
-      <p style="margin: auto">Administrador de Recursos - Laboratorios de Ingeniería</p>
+      <p class="adminrec">Administrador de Recursos - Laboratorios de Ingeniería</p>
       <!-- Enlaces -->
       <div class="navbar-links">
         <!-- Enlace visible solo para alumnos -->
-        <a *ngIf="usuario?.Rol === 'Alumno'" href="/Main" style="margin: auto;">Inicio</a>
-        <a href="" (click)="logout()">Cerrar sesión</a>
+        <p *ngIf="usuario?.Rol === 'Alumno'" class="inicio" (click)="navegarInicio()" style="margin: auto;">Inicio</p>
+        <p class="logout" (click)="logout()">Cerrar sesión</p>
         
       
        

@@ -26,6 +26,10 @@ export class NavbarComponent implements OnInit {
       this.usuario = null;
       this.router.navigate(['']);
     }
+    navegarInicio(){
+      this.router.navigate(['/Main'])
+    }
   }
+  
 
 
