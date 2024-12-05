@@ -203,11 +203,10 @@ export class CatalogosComponent implements OnInit {
               const usuario = new Usuario();
               usuario.Usuario = row[0];
               usuario.Nombre = row[1];       
-              usuario.Correo = row[2]; 
-              usuario.Rol = row[3]; 
-              usuario.Contrasena = row[4];
-              usuario.Carrera = row[5];
-              usuario.Matricula = row[6];
+              usuario.Rol = row[2]; 
+              usuario.Contrasena = row[3];
+              usuario.Carrera = row[4];
+              usuario.Matricula = row[5];
   
               this.listaAlumnos.push(usuario);
               usuario.Usuario = String(row[0]); 
@@ -453,8 +452,6 @@ fotoPreview: string | ArrayBuffer | null = null;
   }
   
   async agregarRecursoASolicitud(recurso: Recurso) {
-    console.log(this.solicitudActual);
-  
     if (this.solicitudActual?.idSolicitud === "") {
       Swal.fire({
         title: 'Error',
@@ -465,30 +462,11 @@ fotoPreview: string | ArrayBuffer | null = null;
       return;
     }
   
-    
-  
     try {
       if (recurso.tipoRecurso === 'Aula') {
-        // Caso de aula: se agrega directamente
-        recurso.cantidadSeleccionada = 1; // Para mantener consistencia, asignar una cantidad simbólica
-        this.solicitudActual!.recursos = this.solicitudActual!.recursos || [];
-        this.solicitudActual!.recursos.push( recurso.nombreRecurso, recurso.cantidadSeleccionada.toString());
-  
-        // Actualizar en Firebase usando el servicio
-        const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual!.idSolicitud!);
-        await updateDoc(solicitudRef, {
-          recursos: this.solicitudActual!.recursos,
-        });
-  
-        await Swal.fire({
-          title: 'Éxito',
-          text: `El aula "${recurso.nombreRecurso}" se ha añadido a la solicitud correctamente.`,
-          icon: 'success',
-          confirmButtonText: 'Ok',
-        });
-  
+        recurso.cantidadSeleccionada = 1; // Asignar cantidad simbólica para aula
+        this.solicitudActual!.recursos.push(recurso); // Se agrega el objeto completo
       } else {
-        // Caso de recursos con cantidad
         const result = await Swal.fire({
           title: '¿Agregar recurso?',
           text: `Selecciona la cantidad de "${recurso.nombreRecurso}" a agregar (disponible: ${recurso.cantidadDisp})`,
@@ -513,30 +491,23 @@ fotoPreview: string | ArrayBuffer | null = null;
   
         if (result.isConfirmed) {
           const cantidad = parseInt(result.value || "0");
-  
           recurso.cantidadSeleccionada = cantidad;
-          this.solicitudActual!.recursos = this.solicitudActual!.recursos || [];
-          this.solicitudActual!.recursos.push( recurso.nombreRecurso, recurso.cantidadSeleccionada.toString() );
   
-          // Actualizar la cantidad disponible
-          const nuevaCantidad = recurso.cantidadDisp - cantidad;
-          await this.catalogoServ.actualizarCantidadDisponible(recurso.recursoId, nuevaCantidad);
-          recurso.cantidadDisp = nuevaCantidad;
-  
-          // Actualizar en Firebase usando el servicio
-          const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual!.idSolicitud!);
-          await updateDoc(solicitudRef, {
-            recursos: this.solicitudActual!.recursos,
-          });
-  
-          await Swal.fire({
-            title: 'Éxito',
-            text: `Se agregaron ${cantidad} unidades de "${recurso.nombreRecurso}" correctamente a la solicitud.`,
-            icon: 'success',
-            confirmButtonText: 'Ok',
-          });
+          // Solo agregar el recurso a la solicitud, sin modificar la cantidad disponible
+          this.solicitudActual!.recursos.push(recurso);
         }
       }
+  
+      // Actualizar la solicitud en Firebase
+      const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual!.idSolicitud!);
+      await updateDoc(solicitudRef, { recursos: this.solicitudActual!.recursos });
+  
+      Swal.fire({
+        title: 'Éxito',
+        text: `Se agregó el recurso correctamente a la solicitud.`,
+        icon: 'success',
+        confirmButtonText: 'Ok',
+      });
     } catch (error) {
       console.error('Error al actualizar la solicitud:', error);
       Swal.fire({
@@ -547,6 +518,8 @@ fotoPreview: string | ArrayBuffer | null = null;
       });
     }
   }
+  
+  
   
   
   

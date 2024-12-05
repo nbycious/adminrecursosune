@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Usuario, Recurso, Solicitud } from 'src/app/Clases/bd';
-import { Firestore, collection, collectionData, query, where } from '@angular/fire/firestore';
+import { Firestore, Timestamp, collection, collectionData, query, where } from '@angular/fire/firestore';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
-import { deleteDoc, doc, setDoc, updateDoc, getDocs } from 'firebase/firestore';
+import { getDoc, doc, setDoc, updateDoc, getDocs } from 'firebase/firestore';
 import { NgForm } from '@angular/forms';
+import { CatalogosService } from '../catalogos/catalogos.service';
+
 
 
 @Component({
@@ -17,6 +19,7 @@ export class SolicitudesComponent implements OnInit {
   solicitud: Solicitud[] = [];
   nuevaSolicitud = new Solicitud();
   listaSolicitudes: Solicitud[] = new Array();
+  estadosDisponibles: string[] = ['Aprobada', 'Finalizada', 'Rechazada'];
   usuario = new Usuario();
 
   solisBD = collection(this.firestore, "Solicitudes")
@@ -24,17 +27,17 @@ export class SolicitudesComponent implements OnInit {
   esAdmin: boolean = false;
 
   //filtro por categoria
-  estatusSeleccionado="";
+  estatusSeleccionado: string = '';
   solisFiltradas:  Solicitud[] = [];
   solicitudes: Solicitud[] = [];
   solicitudSeleccionada: any = null;
-  // Tipo para los filtros de fecha
-fechaSeleccionada: string = ''; // Opciones posibles: '', 'Hoy', 'EstaSemana', 'EsteMes'
+
+
 
 
 
   
-  constructor(private firestore: Firestore, private router: Router) {
+  constructor(private firestore: Firestore, private router: Router,   private ngZone: NgZone, private catalogoServ: CatalogosService ){
     const usuarioGuardado = localStorage.getItem('usuario');
     const usuarioId = localStorage.getItem('usuarioId');
   
@@ -43,6 +46,21 @@ fechaSeleccionada: string = ''; // Opciones posibles: '', 'Hoy', 'EstaSemana', '
     const esAdmin = rolUsuario === 'Administrador';
     if (esAdmin) {
       collectionData(this.solisBD, { idField: 'id' }).subscribe((data: any) => {
+
+          // Ordenar las solicitudes por fecha de inicio más cercana a la actual
+      this.listaSolicitudes = data.sort((a: Solicitud, b: Solicitud) => {
+        const fechaA = new Date(a.fechaInicio);
+        const fechaB = new Date(b.fechaInicio);
+        const hoy = new Date();
+        
+        // Calcular la diferencia absoluta entre la fecha de inicio y hoy
+        const diferenciaA = Math.abs(fechaA.getTime() - hoy.getTime());
+        const diferenciaB = Math.abs(fechaB.getTime() - hoy.getTime());
+        
+        return diferenciaA - diferenciaB;
+      });
+
+
         this.listaSolicitudes = data; // Todas las solicitudes
         this.solicitudes = [...data]; // Asigna las solicitudes al array utilizado para el filtrado
         this.solisFiltradas = [...data]; // Inicializa las solicitudes filtradas
@@ -80,7 +98,11 @@ fechaSeleccionada: string = ''; // Opciones posibles: '', 'Hoy', 'EstaSemana', '
   
   ngOnInit(): void {
     console.log('Solicitudes:', this.solicitudes);
+    this.nuevaSolicitud.estado = 'Enviada';
     this.solisFiltradas = this.solicitudes; 
+    if (!this.solicitudSeleccionada) {
+      this.solicitudSeleccionada = { estado: 'Enviada' }; // Esto es para la solicitud seleccionada por defecto
+    }
   }
  
   seleccionarSolicitud(solicitud: any) {
@@ -154,44 +176,73 @@ fechaSeleccionada: string = ''; // Opciones posibles: '', 'Hoy', 'EstaSemana', '
       }
     }
   
-  
- // Guardar el estado original fuera de la función
-estadoOriginal: string = '';
 
-async actualizarEstado(solicitud: Solicitud, nuevoEstado: string) {
-  const solicitudRef = doc(this.firestore, `Solicitudes/${solicitud.idSolicitud}`);
-
-  // Guardar el estado original antes de mostrar la alerta
-  this.estadoOriginal = solicitud.estado;
-
-  // Mostrar alerta de confirmación antes de actualizar
-  const result = await Swal.fire({
-    title: '¿Está seguro?',
-    text: '¿Está seguro de cambiar el estatus de la solicitud?',
-    icon: 'question',
-    showCancelButton: true,
-    confirmButtonText: 'Aceptar',
-    cancelButtonText: 'Cancelar'
-  });
-
-  if (result.isConfirmed) {
-    try {
-      await updateDoc(solicitudRef, { estado: nuevoEstado });
-      solicitud.estado = nuevoEstado; // Actualizar localmente el estado
-      
-      Swal.fire('Éxito', 'Estado actualizado correctamente', 'success');
-    } catch (error) {
-      console.error('Error al actualizar el estado:', error);
-      Swal.fire('Error', 'No se pudo actualizar el estado', 'error');
+    async actualizarEstado(solicitudId: string, nuevoEstado: string) {
+      try {
+        // Buscar la solicitud
+        const solicitudRef = doc(this.firestore, 'Solicitudes', solicitudId);
+        const solicitudDoc = await getDoc(solicitudRef);
+    
+        if (solicitudDoc.exists()) {
+          const solicitudData = solicitudDoc.data();
+          const recursosSeleccionados = solicitudData?.recursos;
+    
+          // Si la solicitud está siendo aprobada, actualizamos las cantidades de los recursos
+          if (nuevoEstado === 'Aprobada' && recursosSeleccionados) {
+            for (let recurso of recursosSeleccionados) {
+              // Obtener el recurso completo del catálogo utilizando el recursoId
+              const recursoDoc = await getDoc(doc(this.firestore, 'Recursos', recurso.recursoId));
+    
+              if (recursoDoc.exists()) {
+                const recursoData = recursoDoc.data();
+                const cantidadSeleccionada = recurso.cantidadSeleccionada;
+                const nuevaCantidadDisp = recursoData?.cantidadDisp - cantidadSeleccionada;
+    
+                // Usar el servicio CatalogosService para actualizar la cantidad disponible
+                await this.catalogoServ.actualizarCantidadDisponible(recurso.recursoId, nuevaCantidadDisp);
+              }
+            }
+          }
+    
+          // Si el estado cambia a "Finalizada", restablecer las cantidades
+          if (nuevoEstado === 'Finalizada' && recursosSeleccionados) {
+            for (let recurso of recursosSeleccionados) {
+              // Obtener el recurso completo del catálogo utilizando el recursoId
+              const recursoDoc = await getDoc(doc(this.firestore, 'Recursos', recurso.recursoId));
+    
+              if (recursoDoc.exists()) {
+                const recursoData = recursoDoc.data();
+                const cantidadSeleccionada = recurso.cantidadSeleccionada;
+                const cantidadOriginal = recursoData?.cantidadDisp + cantidadSeleccionada;
+    
+                // Usar el servicio CatalogosService para restaurar la cantidad disponible
+                await this.catalogoServ.actualizarCantidadDisponible(recurso.recursoId, cantidadOriginal);
+              }
+            }
+          }
+    
+          // Actualizar el estado de la solicitud
+          await updateDoc(solicitudRef, { estado: nuevoEstado });
+    
+          Swal.fire({
+            title: 'Éxito',
+            text: `La solicitud ha sido actualizada a ${nuevoEstado}.`,
+            icon: 'success',
+            confirmButtonText: 'Ok',
+          });
+        }
+      } catch (error) {
+        console.error('Error al actualizar el estado de la solicitud:', error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un problema al actualizar el estado de la solicitud',
+          icon: 'error',
+          confirmButtonText: 'Ok',
+        });
+      }
     }
-  } else {
-    Swal.fire('Cancelado', 'El estado no ha sido modificado', 'info');
-    // Restaurar el valor original del estado en el combobox
-    solicitud.estado = this.estadoOriginal;
-  }
-}
-
-
+    
+    
   //funcion para el boton de nueva solicitud que solo ve el alumno
    async abrirModalNuevaSolicitud(){
 
@@ -206,23 +257,8 @@ async actualizarEstado(solicitud: Solicitud, nuevoEstado: string) {
     );
    
     const existingSolicitudSnapshot = await getDocs(existingSolicitudRef);
-    if (this.nuevaSolicitud.estado == "Enviada") {
-      // El usuario ya tiene una solicitud activa, mostrar un mensaje de error
-      Swal.fire({
-        title: 'Recuerda',
-        text: 'Ya tienes una solicitud activa. No puedes crear una nueva hasta que el administrador apruebe esta.',
-        icon: 'warning',
-        confirmButtonText: 'OK',
-        allowOutsideClick: false
-      }).then((result) => {
-        if (result.isConfirmed) {
-          let btncerrar = document.getElementById("btnCerrarModalSolicitud")
-          btncerrar?.click()
-        }
-      });
-      return;
-    }
-    else{
+    
+    
       this.nuevaSolicitud = new Solicitud();
       this.nuevaSolicitud.nombreSolicitante = this.usuario.Nombre;
       this.nuevaSolicitud.matriculaSolic = this.usuario.Matricula;
@@ -230,60 +266,35 @@ async actualizarEstado(solicitud: Solicitud, nuevoEstado: string) {
 
   
       
+    
+
+    
+  }
+
+  async aplicarFiltros() {
+    // Si el filtro seleccionado es "Todas", mostrar todas las solicitudes sin filtrar por estado
+    if (this.estatusSeleccionado === '') {
+      this.solisFiltradas = this.solicitudes;
+    } else {
+      // Filtrar las solicitudes según el estado seleccionado
+      this.solisFiltradas = this.solicitudes.filter(solicitud => solicitud.estado === this.estatusSeleccionado);
     }
-
-    
-  }
-
-
-  aplicarFiltros() {
-    this.solisFiltradas = this.solicitudes.filter(solicitud => {
-      // Validación de estatus
-      const cumpleEstatus = !this.estatusSeleccionado || solicitud.estado === this.estatusSeleccionado;
   
-      // Validación de fechas
-     
-  
-      return cumpleEstatus;
-    });
+    // Si no hay solicitudes que coincidan con el filtro, mostrar una alerta (excepto cuando se elige "Todas")
+    if (this.solisFiltradas.length === 0 && this.estatusSeleccionado !== '') {
+      await Swal.fire({
+        title: 'No hay solicitudes',
+        text: `No hay solicitudes con el estado '${this.estatusSeleccionado}'.`,
+        icon: 'info',
+        confirmButtonText: 'Aceptar'
+      });
+    }
   }
   
-  filtrarPorFecha(){
-    this.solisFiltradas = this.solicitudes.filter(solicitud =>{
-        let cumpleFecha = true;
-        if (this.fechaSeleccionada) {
-          const hoy = new Date();
-          const fechaInicio = new Date(solicitud.fechaInicio);
-          const fechaFin = new Date(solicitud.fechaFin);
-    
-          switch (this.fechaSeleccionada) {
-            case 'Hoy':
-              cumpleFecha = fechaInicio <= hoy && fechaFin >= hoy;
-              break;
-            case 'EstaSemana':
-              const inicioSemana = new Date(hoy);
-              inicioSemana.setDate(hoy.getDate() - hoy.getDay()); // Primer día de la semana
-              const finSemana = new Date(hoy);
-              finSemana.setDate(hoy.getDate() + (6 - hoy.getDay())); // Último día de la semana
-              cumpleFecha = (fechaInicio >= inicioSemana && fechaInicio <= finSemana) ||
-                            (fechaFin >= inicioSemana && fechaFin <= finSemana);
-              break;
-            case 'EsteMes':
-              const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1); // Primer día del mes
-              const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0); // Último día del mes
-              cumpleFecha = (fechaInicio >= inicioMes && fechaInicio <= finMes) ||
-                            (fechaFin >= inicioMes && fechaFin <= finMes);
-              break;
-            default:
-              cumpleFecha = true; // Mostrar todas si no hay filtro de fecha
-          }
-        }
-        return cumpleFecha;
-      }
-    )
-   
-  }
   
+
+
+ 
   //generar un ID aleatoria:
   generateRandomString = (num: number) => {
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -295,5 +306,27 @@ async actualizarEstado(solicitud: Solicitud, nuevoEstado: string) {
 
       return result1;
   }
+
+  validacionNumeros(event: KeyboardEvent): void 
+  {
+    const charCode = event.key.charCodeAt(0);
+    if (!/[0-9]/.test(event.key))
+      {
+        event.preventDefault();
+      }
+  }
+
+  validacionLetras(event: KeyboardEvent): void
+  {
+    const charCode = event.key.charCodeAt(0);
+    if (!/[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/.test(event.key))
+      {
+        event.preventDefault();
+      }
+  }
+
+
+
+
 
   }
