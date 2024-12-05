@@ -12,7 +12,7 @@
                   <h5 class="text-center" *ngIf="usuario.Rol=='Administrador'">Filtrar por:</h5>
                   <div class="d-flex align-items-center" style="gap: 10px; margin-top: 10px;" *ngIf="usuario.Rol=='Administrador'">
                     <label for="categoryFilter" class="form-label text-center-label" style="margin: 0;">Estatus:</label>
-                    <select id="categoryFilter" class="form-control" [(ngModel)]="estatusSeleccionado" (change)="aplicarFiltros()">
+                    <select id="categoryFilter" class="form-control form-select-lg" [(ngModel)]="estatusSeleccionado" (change)="aplicarFiltros()" style="width: 135px;">
                       <option value="Enviada">Enviadas</option>
                       <option value="Aprobada">Aprobadas</option>
                       <option value="Finalizada">Finalizadas</option>
@@ -20,13 +20,15 @@
                       <option value="">Todas</option>
                     </select>
                   
-                    <label for="dateFilter" class="form-label" style="margin: 0;">Fechas:</label>
-                    <select id="dateFilter" class="form-control sm" (change)="filtrarPorFecha()">
+                   <!-- <label for="dateFilter" class="form-label" style="margin: 0;">Fechas:</label>
+                    <select id="dateFilter" class="form-control sm" (change)="aplicarFiltros()">
                       <option value="Hoy">Hoy</option>
                       <option value="EstaSemana">Esta semana</option>
                       <option value="EsteMes">Este mes</option>
                       <option value="">Todas</option>
-                    </select>
+                    </select>-->
+                    
+                    
                   </div>
                   
               </div>
@@ -50,7 +52,7 @@
                 <th scope="col">Fecha de Devolución</th>
                 <th scope="col">Materia</th>
                 
-               <th  *ngIf="usuario.Rol =='Alumno'" scope="col">Estatus</th>
+               <th  scope="col">Estatus</th>
                 <th  *ngIf="usuario.Rol =='Administrador'" scope="col">Detalles</th>
                 
               
@@ -63,6 +65,19 @@
               <td>{{ solicitud.fechaInicio }}</td>
               <td>{{ solicitud.fechaFin }}</td>
               <td>{{ solicitud.materia }}</td>
+              <td>
+                <select *ngIf="usuario.Rol=='Administrador'" 
+                  class="form-control" 
+                  [(ngModel)]="solicitud.estado" 
+                  (ngModelChange)="actualizarEstado(solicitud.idSolicitud, $event)"
+                  [disabled]="solicitud.estado === 'Finalizada'" 
+                  >
+                  <option *ngFor="let estado of estadosDisponibles" [value]="estado">
+                    {{ estado }}
+                  </option>
+                </select>
+              </td>
+              
              <td  *ngIf="usuario.Rol =='Alumno'">{{solicitud.estado}}</td>
              
             
@@ -70,7 +85,7 @@
                 <button type="button" 
                 *ngIf="usuario.Rol =='Administrador'"
                 class="btn btn-outline-primary" data-bs-toggle="modal" 
-                data-bs-target="#modalDetallesSolicitud"  (click)="seleccionarSolicitud(solicitud)">Ver más</button>
+                data-bs-target="#modalDetallesSolicitud"  (click)="seleccionarSolicitud(solicitud)">Mostrar</button>
               </td>
           </tr>
       </tbody>
@@ -96,23 +111,23 @@
           <table class="table table-striped">
             <tbody>
               <tr>
-                <th>Nombre del solicitante</th>
+                <th>Nombre del solicitante:</th>
                 <td>{{ solicitudSeleccionada.nombreSolicitante }}</td>
               </tr>
               <tr>
-                <th>Matrícula</th>
+                <th>Matrícula:</th>
                 <td>{{ solicitudSeleccionada.matriculaSolic }}</td>
               </tr>
               <tr>
-                <th>Materia</th>
+                <th>Materia:</th>
                 <td>{{ solicitudSeleccionada.materia }}</td>
               </tr>
               <tr>
-                <th>Fecha de inicio</th>
+                <th>Fecha de inicio:</th>
                 <td>{{ solicitudSeleccionada.fechaInicio }}</td>
               </tr>
               <tr>
-                <th>Fecha de fin</th>
+                <th>Fecha de fin:</th>
                 <td>{{ solicitudSeleccionada.fechaFin }}</td>
               </tr>
               <tr>
@@ -128,16 +143,7 @@
                 <td>{{ solicitudSeleccionada.motivo }}</td>
               </tr>
               <tr>
-                <th>Estatus</th>
-                <td>
-                  <select class="form-control"[(ngModel)]="solicitudSeleccionada.estatus" (change)="actualizarEstado(solicitudSeleccionada, solicitudSeleccionada.estatus)">
-                    <option value="Pendiente">Pendiente</option>
-                    <option value="Aprobada">Aprobada</option>
-                    <option value="Finalizada">Finalizada</option>
-                    <option value="Rechazada">Rechazada</option>
-                  </select>
-                </td>
-                
+              
               </tr>
             </tbody>
           </table>
@@ -149,7 +155,7 @@
 
 
 
-<!-- Modal -->
+<!-- Modal solicitar -->
 <div class="modal fade" id="modalSolicitud" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">

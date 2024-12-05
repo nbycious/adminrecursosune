@@ -4,22 +4,18 @@ export class Usuario{
     UsuarioId: string =""; // Se guarda un id unico para cada usuario registrado
     Usuario: string =""; //se guarda el username
     Nombre: string ="";  // Se guarda el nombre propio del usuario
-    Correo: string =""; // Se guarda el correo del usuario
     Rol: string =""; // Se guarda el tipo de rol que va a tener el Usuario Ej: Profesor, Alumno, Administrador
     Contrasena: string =""; // Se guarda la contraseña del Usuario
     Carrera: string ="";//carrera del alumno
-    Periodo: string="";//semestre o cuatrimestre que cursa el alumno
     Matricula="";
 
 
     setData(data:any){
         this.UsuarioId = data.UsuarioId;
         this.Nombre = data.Nombre;
-        this.Correo = data.Correo;
         this.Rol = data.Rol;
         this.Contrasena = data.Contrasena;
         this.Carrera = data.Carrera
-        this.Periodo = data.Periodo;
         this.Matricula = data.Matricula;
     }
 }
@@ -71,13 +67,12 @@ export class Solicitud {
     usuarioId=""; //id del alumno que esta solicitando
 
     fechaSolicitud: string = ""; // Se guarda la fecha en la que se realiza la solicitud
-    fechaSoliNumber: number = 0;
-
-    fechaInicio: string = ""; // Se guarda la fecha para el uso de los recursos a utilizar
-    fechaFin: string = ""; // Se guarda la fecha de fin para el uso de los recursos utilizados 
+    
+    fechaInicio=""; 
+    fechaFin="";     // Inicia como la fecha actual, si es necesario
     estado: string = ""; // Se guarda el estado de la solicitud Ej: Pendiente, Aprobada, Rechazada
     idRecurso="";
-    recursos : string []
+    recursos: Recurso[];
     idRecursos = []
     cantidadRecursos= []
     profResponsable="";
@@ -90,13 +85,13 @@ export class Solicitud {
     requiereSupervision="";
     matriculaSolic="";
     materia="";
+   
   
 
     setData(data:any){
     this.idSolicitud = data.idSolicitud;
   
-    this.fechaSolicitud = data.fechaSolicitud;
-    this.fechaSoliNumber = data.fechaSoliNumber;
+    /*this.fechaSolicitud = data.fechaSolicitud;*/
     this.fechaInicio = data.fechaUso;
     this.fechaFin = data.fechaFin;
     this.estado = data.estadoSolicitud;

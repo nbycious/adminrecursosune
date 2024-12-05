@@ -27,6 +27,7 @@ export class CatalogosComponent implements OnInit {
   nuevoRecurso = new Recurso();
   editRecurso = new Recurso();
   listaRecursos: Recurso[] = new Array();
+  listaAlumnos: Usuario[] = new Array();
 
   // Nuevas propiedades para los filtros
   searchTerm: string = '';
@@ -144,26 +145,91 @@ export class CatalogosComponent implements OnInit {
   onExcelUpload(event: any) {
     const file = event.target.files[0];
     if (file) {
-      readXlsxFile(file).then((rows: any[][]) => {
-        rows.slice(1).forEach(row => {
-          const recurso = new Recurso();
-          recurso.fotoRecurso = row[1];
-          recurso.nombreRecurso = row[2];       
-          recurso.tipoRecurso = row[3]; 
-          recurso.Estado = row[4]; 
-          recurso.Categoria = row[5];
-          recurso.Ubicacion = row[6];
-          recurso.cantidadReal = row[7];
-          recurso.cantidadDisp = row[8];
-
-          // Guarda el recurso en Firestore
-          this.agregarRecursoDesdeExcel(recurso);
-          this.listaRecursos.push(recurso);     
-        });
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esto subirá los datos desde el archivo Excel a Firestore.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, subir',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          readXlsxFile(file).then((rows: any[][]) => {
+            const promises = rows.slice(1).map(row => {
+              const recurso = new Recurso();
+              recurso.fotoRecurso = row[1];
+              recurso.nombreRecurso = row[2];       
+              recurso.tipoRecurso = row[3]; 
+              recurso.Estado = row[4]; 
+              recurso.Categoria = row[5];
+              recurso.Ubicacion = row[6];
+              recurso.cantidadReal = row[7];
+              recurso.cantidadDisp = row[8];
+              
+              this.listaRecursos.push(recurso);
+              return this.agregarRecursoDesdeExcel(recurso);
+            });
+  
+            // Espera a que todas las promesas se resuelvan antes de mostrar la alerta de éxito
+            Promise.all(promises)
+              .then(() => {
+                Swal.fire('¡Subida exitosa!', 'Los recursos se han subido a Firestore.', 'success');
+              })
+              .catch(error => {
+                Swal.fire('Error', 'Hubo un problema al subir los datos.', 'error');
+                console.error('Error al subir recursos:', error);
+              });
+          });
+        }
       });
     }
   }
+  
 
+  alumnoExcelUpload(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esto subirá los datos desde el archivo Excel a Firestore.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, subir',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          readXlsxFile(file).then((rows: any[][]) => {
+            const promises = rows.slice(1).map(row => {
+              const usuario = new Usuario();
+              usuario.Usuario = row[0];
+              usuario.Nombre = row[1];       
+              usuario.Rol = row[2]; 
+              usuario.Contrasena = row[3];
+              usuario.Carrera = row[4];
+              usuario.Matricula = row[5];
+  
+              this.listaAlumnos.push(usuario);
+              usuario.Usuario = String(row[0]); 
+              usuario.Contrasena = String(usuario.Contrasena);
+              usuario.Matricula = String(usuario.Matricula);
+              return this.agregarAlumnoDesdeExcel(usuario);
+            });
+  
+            // Espera a que todas las promesas se resuelvan antes de mostrar la alerta de éxito
+            Promise.all(promises)
+              .then(() => {
+                Swal.fire('¡Subida exitosa!', 'Los alumnos se han subido a Firestore.', 'success');
+              })
+              .catch(error => {
+                Swal.fire('Error', 'Hubo un problema al subir los datos.', 'error');
+                console.error('Error al subir alumnos:', error);
+              });
+          });
+        }
+      });
+    }
+  }
+  
 
   // Método para agregar recursos desde Excel a Firestore
   async agregarRecursoDesdeExcel(recurso: Recurso) {
@@ -177,6 +243,22 @@ export class CatalogosComponent implements OnInit {
       console.error('Error al agregar recurso desde Excel:', error);
     }
   }
+
+  // Método para agregar alumnos desde Excel a Firestore
+  async agregarAlumnoDesdeExcel(usuario: Usuario) {
+    try {
+      const usuarioId = this.generateRandomString(15);
+      usuario.UsuarioId = usuarioId;
+      usuario.Usuario = String(usuario.Usuario);
+      const rutaDoc = doc(this.firestore, "Usuarios", usuarioId);
+      await setDoc(rutaDoc, JSON.parse(JSON.stringify(usuario)));
+     
+    } catch (error) {
+      console.error('Error al agregar usuario desde Excel:', error);
+    }
+  }
+
+
   aplicarFiltros() {
     this.recursosFiltrados = this.recursos.filter(recurso => {
       // Filtro por término de búsqueda
@@ -370,8 +452,6 @@ fotoPreview: string | ArrayBuffer | null = null;
   }
   
   async agregarRecursoASolicitud(recurso: Recurso) {
-    console.log(this.solicitudActual);
-  
     if (this.solicitudActual?.idSolicitud === "") {
       Swal.fire({
         title: 'Error',
@@ -382,30 +462,11 @@ fotoPreview: string | ArrayBuffer | null = null;
       return;
     }
   
-    
-  
     try {
       if (recurso.tipoRecurso === 'Aula') {
-        // Caso de aula: se agrega directamente
-        recurso.cantidadSeleccionada = 1; // Para mantener consistencia, asignar una cantidad simbólica
-        this.solicitudActual!.recursos = this.solicitudActual!.recursos || [];
-        this.solicitudActual!.recursos.push( recurso.nombreRecurso, recurso.cantidadSeleccionada.toString());
-  
-        // Actualizar en Firebase usando el servicio
-        const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual!.idSolicitud!);
-        await updateDoc(solicitudRef, {
-          recursos: this.solicitudActual!.recursos,
-        });
-  
-        await Swal.fire({
-          title: 'Éxito',
-          text: `El aula "${recurso.nombreRecurso}" se ha añadido a la solicitud correctamente.`,
-          icon: 'success',
-          confirmButtonText: 'Ok',
-        });
-  
+        recurso.cantidadSeleccionada = 1; // Asignar cantidad simbólica para aula
+        this.solicitudActual!.recursos.push(recurso); // Se agrega el objeto completo
       } else {
-        // Caso de recursos con cantidad
         const result = await Swal.fire({
           title: '¿Agregar recurso?',
           text: `Selecciona la cantidad de "${recurso.nombreRecurso}" a agregar (disponible: ${recurso.cantidadDisp})`,
@@ -430,30 +491,23 @@ fotoPreview: string | ArrayBuffer | null = null;
   
         if (result.isConfirmed) {
           const cantidad = parseInt(result.value || "0");
-  
           recurso.cantidadSeleccionada = cantidad;
-          this.solicitudActual!.recursos = this.solicitudActual!.recursos || [];
-          this.solicitudActual!.recursos.push( recurso.nombreRecurso, recurso.cantidadSeleccionada.toString() );
   
-          // Actualizar la cantidad disponible
-          const nuevaCantidad = recurso.cantidadDisp - cantidad;
-          await this.catalogoServ.actualizarCantidadDisponible(recurso.recursoId, nuevaCantidad);
-          recurso.cantidadDisp = nuevaCantidad;
-  
-          // Actualizar en Firebase usando el servicio
-          const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual!.idSolicitud!);
-          await updateDoc(solicitudRef, {
-            recursos: this.solicitudActual!.recursos,
-          });
-  
-          await Swal.fire({
-            title: 'Éxito',
-            text: `Se agregaron ${cantidad} unidades de "${recurso.nombreRecurso}" correctamente a la solicitud.`,
-            icon: 'success',
-            confirmButtonText: 'Ok',
-          });
+          // Solo agregar el recurso a la solicitud, sin modificar la cantidad disponible
+          this.solicitudActual!.recursos.push(recurso);
         }
       }
+  
+      // Actualizar la solicitud en Firebase
+      const solicitudRef = doc(this.firestore, 'Solicitudes', this.solicitudActual!.idSolicitud!);
+      await updateDoc(solicitudRef, { recursos: this.solicitudActual!.recursos });
+  
+      Swal.fire({
+        title: 'Éxito',
+        text: `Se agregó el recurso correctamente a la solicitud.`,
+        icon: 'success',
+        confirmButtonText: 'Ok',
+      });
     } catch (error) {
       console.error('Error al actualizar la solicitud:', error);
       Swal.fire({
@@ -464,6 +518,8 @@ fotoPreview: string | ArrayBuffer | null = null;
       });
     }
   }
+  
+  
   
   
   
