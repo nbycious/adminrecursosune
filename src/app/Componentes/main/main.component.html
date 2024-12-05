@@ -36,46 +36,28 @@
 </div>
 
 <!-- Contenedor de vista administrador -->
-<div *ngIf="rol =='Administrador'">
+<div *ngIf="rol == 'Administrador'">
   <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <!-- Pestaña Catálogo -->
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Agregar alumnos</button>
+      <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="true">Catálogo</button>
     </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Catálogo</button>
-    </li>
+    
+    <!-- Pestaña Solicitudes -->
     <li class="nav-item" role="presentation">
       <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Solicitudes</button>
     </li>
   </ul>
-  <div class="tab-content" id="myTabContent">
-    <!-- Panel Agregar alumnos -->
-    <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
-      <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
-        <div>
-          <button type="button" class="btn btn-outline-success" onclick="document.getElementById('excelInput').click()">
-            Agregar desde Excel
-          </button>
-          <input id="excelInput" type="file" style="display: none;" accept=".xlsx, .xls" onchange="onExcelUpload(event)" />
-        </div>
-      </div>
-    </div>
 
-    <!-- Panel Profile -->
-    <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-      <!-- Contenido del tab Profile -->
+  <div class="tab-content" id="myTabContent">
+    <!-- Panel Catálogo -->
+    <div class="tab-pane fade show active" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
       <app-catalogos></app-catalogos>
     </div>
 
     <!-- Panel Solicitudes -->
     <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
-      <!-- Incluyendo el componente de Angular -->
       <app-solicitudes></app-solicitudes>
     </div>
-  </div>
-  <div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0"></div>
-    <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0"></div>
-    <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0"></div>
   </div>
 </div>

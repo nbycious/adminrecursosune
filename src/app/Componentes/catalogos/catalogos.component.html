@@ -25,6 +25,14 @@
             </button>
             <input #excelInput class="inputExcel" type="file" (change)="onExcelUpload($event)" accept=".xlsx, .xls" aria-label="Archivo" style="display: none;" />
           </div> 
+
+          <div>
+            <button type="button" *ngIf="usuario?.Rol === 'Administrador'" class="btn btn-outline-success" (click)="excelAlumnoInput.click()">
+              Agregar alumnos desde Excel
+            </button>
+            <input #excelAlumnoInput class="inputExcel" type="file" (change)="alumnoExcelUpload($event)" accept=".xlsx, .xls" aria-label="Archivo" style="display: none;" />
+          </div>
+        
         </div>
 
         <!-- Filtro de búsqueda -->

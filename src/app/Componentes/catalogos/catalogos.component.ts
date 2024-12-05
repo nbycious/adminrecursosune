@@ -27,6 +27,7 @@ export class CatalogosComponent implements OnInit {
   nuevoRecurso = new Recurso();
   editRecurso = new Recurso();
   listaRecursos: Recurso[] = new Array();
+  listaAlumnos: Usuario[] = new Array();
 
   // Nuevas propiedades para los filtros
   searchTerm: string = '';
@@ -144,26 +145,92 @@ export class CatalogosComponent implements OnInit {
   onExcelUpload(event: any) {
     const file = event.target.files[0];
     if (file) {
-      readXlsxFile(file).then((rows: any[][]) => {
-        rows.slice(1).forEach(row => {
-          const recurso = new Recurso();
-          recurso.fotoRecurso = row[1];
-          recurso.nombreRecurso = row[2];       
-          recurso.tipoRecurso = row[3]; 
-          recurso.Estado = row[4]; 
-          recurso.Categoria = row[5];
-          recurso.Ubicacion = row[6];
-          recurso.cantidadReal = row[7];
-          recurso.cantidadDisp = row[8];
-
-          // Guarda el recurso en Firestore
-          this.agregarRecursoDesdeExcel(recurso);
-          this.listaRecursos.push(recurso);     
-        });
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esto subirá los datos desde el archivo Excel a Firestore.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, subir',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          readXlsxFile(file).then((rows: any[][]) => {
+            const promises = rows.slice(1).map(row => {
+              const recurso = new Recurso();
+              recurso.fotoRecurso = row[1];
+              recurso.nombreRecurso = row[2];       
+              recurso.tipoRecurso = row[3]; 
+              recurso.Estado = row[4]; 
+              recurso.Categoria = row[5];
+              recurso.Ubicacion = row[6];
+              recurso.cantidadReal = row[7];
+              recurso.cantidadDisp = row[8];
+              
+              this.listaRecursos.push(recurso);
+              return this.agregarRecursoDesdeExcel(recurso);
+            });
+  
+            // Espera a que todas las promesas se resuelvan antes de mostrar la alerta de éxito
+            Promise.all(promises)
+              .then(() => {
+                Swal.fire('¡Subida exitosa!', 'Los recursos se han subido a Firestore.', 'success');
+              })
+              .catch(error => {
+                Swal.fire('Error', 'Hubo un problema al subir los datos.', 'error');
+                console.error('Error al subir recursos:', error);
+              });
+          });
+        }
       });
     }
   }
+  
 
+  alumnoExcelUpload(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esto subirá los datos desde el archivo Excel a Firestore.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, subir',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          readXlsxFile(file).then((rows: any[][]) => {
+            const promises = rows.slice(1).map(row => {
+              const usuario = new Usuario();
+              usuario.Usuario = row[0];
+              usuario.Nombre = row[1];       
+              usuario.Correo = row[2]; 
+              usuario.Rol = row[3]; 
+              usuario.Contrasena = row[4];
+              usuario.Carrera = row[5];
+              usuario.Matricula = row[6];
+  
+              this.listaAlumnos.push(usuario);
+              usuario.Usuario = String(row[0]); 
+              usuario.Contrasena = String(usuario.Contrasena);
+              usuario.Matricula = String(usuario.Matricula);
+              return this.agregarAlumnoDesdeExcel(usuario);
+            });
+  
+            // Espera a que todas las promesas se resuelvan antes de mostrar la alerta de éxito
+            Promise.all(promises)
+              .then(() => {
+                Swal.fire('¡Subida exitosa!', 'Los alumnos se han subido a Firestore.', 'success');
+              })
+              .catch(error => {
+                Swal.fire('Error', 'Hubo un problema al subir los datos.', 'error');
+                console.error('Error al subir alumnos:', error);
+              });
+          });
+        }
+      });
+    }
+  }
+  
 
   // Método para agregar recursos desde Excel a Firestore
   async agregarRecursoDesdeExcel(recurso: Recurso) {
@@ -177,6 +244,22 @@ export class CatalogosComponent implements OnInit {
       console.error('Error al agregar recurso desde Excel:', error);
     }
   }
+
+  // Método para agregar alumnos desde Excel a Firestore
+  async agregarAlumnoDesdeExcel(usuario: Usuario) {
+    try {
+      const usuarioId = this.generateRandomString(15);
+      usuario.UsuarioId = usuarioId;
+      usuario.Usuario = String(usuario.Usuario);
+      const rutaDoc = doc(this.firestore, "Usuarios", usuarioId);
+      await setDoc(rutaDoc, JSON.parse(JSON.stringify(usuario)));
+     
+    } catch (error) {
+      console.error('Error al agregar usuario desde Excel:', error);
+    }
+  }
+
+
   aplicarFiltros() {
     this.recursosFiltrados = this.recursos.filter(recurso => {
       // Filtro por término de búsqueda

@@ -8,7 +8,6 @@ export class Usuario{
     Rol: string =""; // Se guarda el tipo de rol que va a tener el Usuario Ej: Profesor, Alumno, Administrador
     Contrasena: string =""; // Se guarda la contraseña del Usuario
     Carrera: string ="";//carrera del alumno
-    Periodo: string="";//semestre o cuatrimestre que cursa el alumno
     Matricula="";
 
 
@@ -19,7 +18,6 @@ export class Usuario{
         this.Rol = data.Rol;
         this.Contrasena = data.Contrasena;
         this.Carrera = data.Carrera
-        this.Periodo = data.Periodo;
         this.Matricula = data.Matricula;
     }
 }
@@ -90,6 +88,7 @@ export class Solicitud {
     requiereSupervision="";
     matriculaSolic="";
     materia="";
+   
   
 
     setData(data:any){
